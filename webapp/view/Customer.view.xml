@@ -1,0 +1,232 @@
+
+<mvc:View
+    controllerName="project1.controller.Customer"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form">
+
+    <Page id="customerPage" class="sapUiContentPadding">
+        <content>
+
+            <!-- HEADER BAR -->
+            <HBox class="adminHeaderRow sapUiMediumMarginBottom">
+                <Title text="My Purchase Requisitions" level="H2"/>
+                <HBox class="adminSearchCreate">
+                    <SearchField
+                        width="260px"
+                        placeholder="Search requisitions..."
+                        liveChange="onSearchPR"/>
+                    <Button
+                        text="Add New Requisition"
+                        type="Emphasized"
+                        icon="sap-icon://add"
+                        press="onAddPR"
+                        class="adminCreateButton"/>
+                </HBox>
+            </HBox>
+
+            <!-- TABLE -->
+            <Table id="prTable"
+                   items="{mockData>/purchaseRequisitions}"
+                   growing="true"
+                   growingScrollToLoad="true"
+                   class="sapUiResponsiveMargin customerTable">
+
+                <columns>
+                    <Column><Text text="PR Number" class="columnTitleBlue"/></Column>
+                    <Column><Text text="Type" class="columnTitleBlue"/></Column>
+                    <Column><Text text="Description" class="columnTitleBlue"/></Column>
+                    <Column><Text text="Plant" class="columnTitleBlue"/></Column>
+                    <Column><Text text="Supplier" class="columnTitleBlue"/></Column>
+                    <Column><Text text="Status" class="columnTitleBlue"/></Column>
+                    <Column><Text text="Actions" class="columnTitleBlue"/></Column>
+                </columns>
+
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{mockData>purchaserequisition}"/>
+                            <Text text="{mockData>purchaserequisitiontype}"/>
+                            <Text text="{mockData>purchaserequisitiontext}"/>
+                            <Text text="{mockData>plant}"/>
+                            <Text text="{mockData>supplier}"/>
+
+                            <!-- STATUS -->
+                            <ObjectStatus
+                                text="{= ${mockData>createdbyuser} === 'U003' ? 'Approved' : 'Pending'}"
+                                state="{= ${mockData>createdbyuser} === 'U003' ? 'Success' : 'Warning'}"/>
+
+                            <!-- ACTION BUTTONS -->
+                            <HBox class="adminActions">
+                                <Button
+                                    text="Edit"
+                                    icon="sap-icon://edit"
+                                    type="Transparent"
+                                    press="onEditPR"/>
+                                <Button
+                                    text="Details"
+                                    icon="sap-icon://display"
+                                    type="Transparent"
+                                    press="onViewPR"/>
+                            </HBox>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+
+        </content>
+    </Page>
+
+    <!-- ====================== -->
+    <!--      EDIT / CREATE     -->
+    <!-- ====================== -->
+    <Dialog id="prDialog"
+            title="{local>/dialogTitle}"
+            class="sapUiContentPadding"
+            stretch="true"
+            afterClose="onDialogClose">
+        <VBox class="sapUiSmallMargin">
+
+            <Title text="General Information" level="H2"/>
+
+            <Label text="Requisition Description"/>
+            <Input value="{local>/currentPR/purchaserequisitiontext}" placeholder="Enter description"/>
+
+            <Label text="Document Type"/>
+            <Select selectedKey="{local>/currentPR/purchaserequisitiontype}">
+                <items>
+                    <core:Item key="NB"  text="NB"/>
+                    <core:Item key="NBS" text="NBS"/>
+                    <core:Item key="RV"  text="RV"/>
+                </items>
+            </Select>
+
+            <Label text="Plant"/>
+            <Input value="{local>/currentPR/plant}" placeholder="Plant Code"/>
+
+            <Label text="Supplier"/>
+            <Input value="{local>/currentPR/supplier}" placeholder="Supplier Code"/>
+
+            <!-- ====================== -->
+            <!--    ITEMS SECTION       -->
+            <!-- ====================== -->
+            <Title text="Items" level="H2" class="itemsSectionTitle"/>
+
+            <VBox class="itemsCard">
+
+                <Table id="itemsTable"
+                       items="{local>/currentPR/items}"
+                       class="itemsTable">
+
+                    <columns>
+                        <Column><Text text="Item"     class="columnBlue"/></Column>
+                        <Column><Text text="Material" class="columnBlue"/></Column>
+                        <Column><Text text="Qty"      class="columnBlue"/></Column>
+                        <Column><Text text="Price"    class="columnBlue"/></Column>
+                        <Column><Text text="Actions"  class="columnBlue"/></Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text  text="{local>purchaserequisitionitem}" class="itemNumberGrey"/>
+                                <Input value="{local>material}"                placeholder="Material" class="itemInput"/>
+                                <Input value="{local>requestedquantity}" type="Number" placeholder="Qty"   class="itemInput"/>
+                                <Input value="{local>purchaserequisitionprice}" type="Number" placeholder="Price" class="itemInput"/>
+                                <HBox class="itemActions">
+                                    <Button icon="sap-icon://delete" type="Reject" press="onDeleteItem"/>
+                                </HBox>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+
+                <Button text="Add Item"
+                        icon="sap-icon://add"
+                        type="Emphasized"
+                        press="onAddItem"
+                        class="addItemButton"/>
+            </VBox>
+
+        </VBox>
+
+        <beginButton>
+            <Button text="Save" type="Emphasized" press="onSavePR"/>
+        </beginButton>
+        <endButton>
+            <Button text="Cancel" type="Reject" press="onCancelPR"/>
+        </endButton>
+    </Dialog>
+
+    <!-- ====================== -->
+    <!--      DETAILS DIALOG    -->
+    <!-- ====================== -->
+    <Dialog id="prDetailsDialog"
+            title="Requisition Details"
+            class="sapUiResponsiveContentPadding"
+            contentWidth="900px"
+            contentHeight="70%"
+            resizable="true"
+            draggable="true">
+        <content>
+            <VBox width="100%">
+                <form:SimpleForm
+                    editable="false"
+                    layout="ResponsiveGridLayout"
+                    labelSpanXL="3" labelSpanL="3" labelSpanM="4" labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+                    columnsXL="2" columnsL="2" columnsM="1"
+                    class="sapUiLargeMarginBottom">
+
+                    <Label text="PR Number"/>
+                    <Text text="{local>/currentPR/purchaserequisition}"/>
+
+                    <Label text="Type"/>
+                    <Text text="{local>/currentPR/purchaserequisitiontype}"/>
+
+                    <Label text="Description"/>
+                    <Text text="{local>/currentPR/purchaserequisitiontext}"/>
+
+                    <Label text="Plant"/>
+                    <Text text="{local>/currentPR/plant}"/>
+
+                    <Label text="Supplier"/>
+                    <Text text="{local>/currentPR/supplier}"/>
+
+                    <Label text="Status"/>
+                    <ObjectStatus
+                        text="{= ${local>/currentPR/createdbyuser} === 'U003' ? 'Approved' : 'Pending'}"
+                        state="{= ${local>/currentPR/createdbyuser} === 'U003' ? 'Success' : 'Warning'}"/>
+
+                </form:SimpleForm>
+
+                <Title text="Items" level="H3"/>
+                <Table items="{local>/currentPR/items}">
+                    <columns>
+                        <Column width="8rem"><Text text="Item"/></Column>
+                        <Column width="12rem"><Text text="Material"/></Column>
+                        <Column width="8rem"><Text text="Qty"/></Column>
+                        <Column width="10rem"><Text text="Price"/></Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text text="{local>purchaserequisitionitem}"/>
+                                <Text text="{local>material}"/>
+                                <Text text="{local>requestedquantity}"/>
+                                <Text text="{local>purchaserequisitionprice}"/>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </VBox>
+        </content>
+
+        <beginButton>
+            <Button text="Close" press="onClosePRDetails"/>
+        </beginButton>
+    </Dialog>
+
+</mvc:View>

@@ -1,0 +1,470 @@
+
+<mvc:View
+    controllerName="project1.controller.Admin"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form">
+
+    <Page id="adminPage" class="sapUiContentPadding">
+        <content>
+
+            <!-- =============================== -->
+            <!-- NAVBAR (Switch PR / PO) -->
+            <!-- =============================== -->
+            <VBox class="adminNavbarContainer sapUiMediumMarginBottom">
+                <HBox class="adminNavbar" justifyContent="Center" alignItems="Center">
+                    <Button
+                        id="btnNavPR"
+                        text="Purchase Requisitions"
+                        type="Emphasized"
+                        press="onNavToPR"
+                        class="adminNavButton"/>
+
+                    <Button
+                        id="btnNavPO"
+                        text="Purchase Orders"
+                        type="Transparent"
+                        press="onNavToPO"
+                        class="adminNavButton"/>
+                </HBox>
+            </VBox>
+
+            <!-- =============================== -->
+            <!-- SECTION PR -->
+            <!-- =============================== -->
+            <VBox id="sectionPR" visible="true">
+
+                <HBox class="adminHeaderRow sapUiMediumMarginBottom">
+                    <Title text="Purchase Requisitions" level="H2" class="titleH2"/>
+                    <HBox class="adminSearchCreate">
+                        <SearchField width="260px" placeholder="Search PR..." liveChange="onSearchPR" class="searchFieldDecor"/>
+                        <Button text="Create Purchase Requisition"
+                                icon="sap-icon://add"
+                                type="Emphasized"
+                                press="onCreatePR"
+                                class="adminCreateButton pulseButton"/>
+                    </HBox>
+                </HBox>
+
+                <Table id="prTablee"
+                       items="{mockData>/purchaseRequisitions}"
+                       growing="true"
+                       growingScrollToLoad="true"
+                       class="elevatedTable">
+
+                    <columns>
+                        <Column width="10rem"><Text text="PR" class="columnTitleBlue"/></Column>
+                        <Column width="8rem"><Text text="Type" class="columnTitleBlue"/></Column>
+                        <Column width="20rem"><Text text="Description" class="columnTitleBlue"/></Column>
+                        <Column width="8rem"><Text text="Plant" class="columnTitleBlue"/></Column>
+                        <Column width="8rem"><Text text="# Items" class="columnTitleBlue"/></Column>
+                        <Column width="10rem"><Text text="Status" class="columnTitleBlue"/></Column>
+                        <Column width="20rem"><Text text="Actions" class="columnTitleBlue"/></Column>
+                    </columns>
+
+                    <items>
+                        <!-- Row highlight: Pending -> Information (blue), Approved -> Success, Rejected -> Error -->
+                        <ColumnListItem
+                            highlight="{
+                                = ${mockData>_status} === 'Approved' ? 'Success' :
+                                  ${mockData>_status} === 'Rejected' ? 'Error'   :
+                                  'Information'
+                            }">
+                            <cells>
+                                <Text text="{mockData>purchaserequisition}"/>
+                                <Text text="{mockData>purchaserequisitiontype}"/>
+                                <Text text="{mockData>purchaserequisitiontext}" class="ellipsis"/>
+                                <Text text="{mockData>plant}"/>
+
+                                <ObjectNumber number="{= ${mockData>items}.length }"/>
+
+                                <ObjectStatus
+                                    class="statusPill"
+                                    text="{= ${mockData>_status} || 'Pending'}"
+                                    state="{
+                                        = ${mockData>_status} === 'Approved' ? 'Success' :
+                                          ${mockData>_status} === 'Rejected' ? 'Error'   :
+                                          'Information'
+                                    }"/>
+
+                                <HBox class="adminActions">
+                                    <Button icon="sap-icon://display" type="Transparent" tooltip="Details" press="onPRDetails"/>
+                                    <Button icon="sap-icon://edit" type="Transparent" tooltip="Edit" press="onEditPR"/>
+                                    <Button icon="sap-icon://delete" type="Reject" tooltip="Delete" press="onDeletePR"/>
+                                    <Button text="Approve" type="Success" press="onApprovePR"/>
+                                    <Button text="Reject" type="Reject" press="onRejectPR"/>
+                                </HBox>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </VBox>
+
+            <!-- =============================== -->
+            <!-- SECTION PO -->
+            <!-- =============================== -->
+            <VBox id="sectionPO" visible="false">
+
+                <HBox class="adminHeaderRow sapUiMediumMarginBottom sapUiMediumMarginTop">
+                    <Title text="Purchase Orders" level="H2" class="titleH2"/>
+                    <HBox class="adminSearchCreate">
+                        <SearchField width="260px" placeholder="Search PO..." liveChange="onSearchPO" class="searchFieldDecor"/>
+                        <Button text="Create Purchase Order"
+                                icon="sap-icon://add"
+                                type="Emphasized"
+                                press="onCreatePO"
+                                class="adminCreateButton pulseButton"/>
+                    </HBox>
+                </HBox>
+
+                <Table id="poTablee"
+                       items="{mockData>/purchaseOrders}"
+                       growing="true"
+                       growingScrollToLoad="true"
+                       class="elevatedTable">
+
+                    <columns>
+                        <Column width="10rem"><Text text="PO" class="columnTitleBlue"/></Column>
+                        <Column width="8rem"><Text text="Company" class="columnTitleBlue"/></Column>
+                        <Column width="8rem"><Text text="Org" class="columnTitleBlue"/></Column>
+                        <Column width="8rem"><Text text="Group" class="columnTitleBlue"/></Column>
+                        <Column width="8rem"><Text text="Supplier" class="columnTitleBlue"/></Column>
+                        <Column width="8rem"><Text text="# Items" class="columnTitleBlue"/></Column>
+                        <Column width="10rem"><Text text="Status" class="columnTitleBlue"/></Column>
+                        <Column width="20rem"><Text text="Actions" class="columnTitleBlue"/></Column>
+                    </columns>
+
+                    <items>
+                        <!-- Row highlight: Open -> Information (blue), Approved -> Success, Rejected -> Error -->
+                        <ColumnListItem
+                            highlight="{
+                                = ${mockData>_status} === 'Approved' ? 'Success' :
+                                  ${mockData>_status} === 'Rejected' ? 'Error'   :
+                                  'Information'
+                            }">
+                            <cells>
+                                <Text text="{mockData>purchaseorder}"/>
+                                <Text text="{mockData>companycode}"/>
+                                <Text text="{mockData>purchasingorganization}"/>
+                                <Text text="{mockData>purchasinggroup}"/>
+                                <Text text="{mockData>supplier}"/>
+
+                                <ObjectNumber number="{= ${mockData>items}.length }"/>
+
+                                <ObjectStatus
+                                    class="statusPill"
+                                    text="{= ${mockData>_status} || 'Open'}"
+                                    state="{
+                                        = ${mockData>_status} === 'Approved' ? 'Success' :
+                                          ${mockData>_status} === 'Rejected' ? 'Error'   :
+                                          'Information'
+                                    }"/>
+
+                                <HBox class="adminActions">
+                                    <Button icon="sap-icon://display" type="Transparent" tooltip="Details" press="onPODetails"/>
+                                    <Button icon="sap-icon://edit" type="Transparent" tooltip="Edit" press="onEditPO"/>
+                                    <Button icon="sap-icon://delete" type="Reject" tooltip="Delete" press="onDeletePO"/>
+                                    <Button text="Approve" type="Success" press="onApprovePO"/>
+                                    <Button text="Reject" type="Reject" press="onRejectPO"/>
+                                </HBox>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+
+                </Table>
+            </VBox>
+
+        </content>
+    </Page>
+
+    <!-- =============================== -->
+    <!-- DIALOG: PR DETAILS -->
+    <!-- =============================== -->
+    <Dialog
+        id="prDialogg"
+        title="Purchase Requisition – Details"
+        class="sapUiResponsiveContentPadding"
+        contentWidth="720px"
+        contentHeight="auto"
+        resizable="true"
+        draggable="true">
+
+        <content>
+            <form:SimpleForm
+                editable="false"
+                layout="ResponsiveGridLayout"
+                labelSpanXL="3" labelSpanL="3" labelSpanM="4" labelSpanS="12"
+                adjustLabelSpan="false"
+                emptySpanXL="1" emptySpanL="1" emptySpanM="0" emptySpanS="0"
+                columnsXL="2" columnsL="2" columnsM="1"
+                class="sapUiLargeMarginBottom">
+
+                <Label text="PR"/>
+                <Text text="{local>/currentPR/purchaserequisition}"/>
+
+                <Label text="Type"/>
+                <Text text="{local>/currentPR/purchaserequisitiontype}"/>
+
+                <Label text="Description"/>
+                <Text text="{local>/currentPR/purchaserequisitiontext}"/>
+
+                <Label text="Plant"/>
+                <Text text="{local>/currentPR/plant}"/>
+
+                <Label text="Supplier"/>
+                <Text text="{local>/currentPR/supplier}"/>
+
+                <Label text="Created By"/>
+                <Text text="{local>/currentPR/createdbyuser}"/>
+
+                <Label text="Status"/>
+                <ObjectStatus
+                    class="statusPill"
+                    text="{= ${local>/currentPR/_status} || 'Pending'}"
+                    state="{
+                        = ${local>/currentPR/_status} === 'Approved' ? 'Success' :
+                          ${local>/currentPR/_status} === 'Rejected' ? 'Error'   :
+                          'Information'
+                    }"/>
+
+                <Label text="Items"/>
+                <List items="{local>/currentPR/items}">
+                    <StandardListItem
+                        title="{= ${local>material} || ${local>matnr} || 'Item'}"
+                        description="{= ${local>shorttext} || ${local>description} || ''}"
+                        info="{= (${local>quantity} || 0) + ' ' + (${local>unit} || '')}"/>
+                </List>
+
+            </form:SimpleForm>
+        </content>
+
+        <beginButton>
+            <Button text="Close" press=".onCloseDialog"/>
+        </beginButton>
+    </Dialog>
+
+    <!-- =============================== -->
+    <!-- DIALOG: PO DETAILS -->
+    <!-- =============================== -->
+    <Dialog
+        id="poDialogg"
+        title="Purchase Order – Details"
+        class="sapUiResponsiveContentPadding"
+        contentWidth="720px"
+        contentHeight="auto"
+        resizable="true"
+        draggable="true">
+
+        <content>
+            <form:SimpleForm
+                editable="false"
+                layout="ResponsiveGridLayout"
+                labelSpanXL="3" labelSpanL="3" labelSpanM="4" labelSpanS="12"
+                adjustLabelSpan="false"
+                emptySpanXL="1" emptySpanL="1" emptySpanM="0" emptySpanS="0"
+                columnsXL="2" columnsL="2" columnsM="1"
+                class="sapUiLargeMarginBottom">
+
+                <Label text="PO"/>
+                <Text text="{local>/currentPO/purchaseorder}"/>
+
+                <Label text="Company Code"/>
+                <Text text="{local>/currentPO/companycode}"/>
+
+                <Label text="Purch. Organization"/>
+                <Text text="{local>/currentPO/purchasingorganization}"/>
+
+                <Label text="Purch. Group"/>
+                <Text text="{local>/currentPO/purchasinggroup}"/>
+
+                <Label text="Supplier"/>
+                <Text text="{local>/currentPO/supplier}"/>
+
+                <Label text="Created By"/>
+                <Text text="{local>/currentPO/createdbyuser}"/>
+
+                <Label text="Status"/>
+                <ObjectStatus
+                    class="statusPill"
+                    text="{= ${local>/currentPO/_status} || 'Open'}"
+                    state="{
+                        = ${local>/currentPO/_status} === 'Approved' ? 'Success' :
+                          ${local>/currentPO/_status} === 'Rejected' ? 'Error'   :
+                          'Information'
+                    }"/>
+
+                <Label text="Items"/>
+                <List items="{local>/currentPO/items}">
+                    <StandardListItem
+                        title="{= ${local>material} || ${local>matnr} || 'Item'}"
+                        description="{= ${local>shorttext} || ${local>description} || ''}"
+                        info="{= (${local>quantity} || 0) + ' ' + (${local>unit} || '')}"/>
+                </List>
+
+            </form:SimpleForm>
+        </content>
+
+        <beginButton>
+            <Button text="Close" press=".onCloseDialog"/>
+        </beginButton>
+    </Dialog>
+
+    <!-- =============================== -->
+    <!-- DIALOG: CREATE / EDIT PR (XML, styled with your classes) -->
+    <!-- =============================== -->
+    <Dialog id="prCreateDialog"
+            title="{local>/dialogTitle}"
+            class="sapUiContentPadding"
+            stretch="true"
+            afterClose="onDialogClose">
+
+        <VBox class="sapUiSmallMargin">
+
+            <Title text="General Information" level="H2" class="dialogHeader titleH2"/>
+
+            <Label text="Requisition Description"/>
+            <Input value="{local>/currentPR/purchaserequisitiontext}" placeholder="Enter description"/>
+
+            <Label text="Document Type"/>
+            <Select selectedKey="{local>/currentPR/purchaserequisitiontype}">
+                <items>
+                    <core:Item key="NB"  text="NB"/>
+                    <core:Item key="NBS" text="NBS"/>
+                    <core:Item key="RV"  text="RV"/>
+                </items>
+            </Select>
+
+            <Label text="Plant"/>
+            <Input value="{local>/currentPR/plant}" placeholder="Plant Code"/>
+
+            <Label text="Supplier"/>
+            <Input value="{local>/currentPR/supplier}" placeholder="Supplier Code"/>
+
+            <!-- ITEMS -->
+            <Title text="Items" level="H2" class="dialogHeader titleH2"/>
+
+            <VBox class="itemsCard">
+                <Table id="prItemsTable" items="{local>/currentPR/items}" class="itemsTable elevatedTable">
+                    <columns>
+                        <Column><Text text="Item"     class="columnTitleBlue"/></Column>
+                        <Column><Text text="Material" class="columnTitleBlue"/></Column>
+                        <Column><Text text="Qty"      class="columnTitleBlue"/></Column>
+                        <Column><Text text="Price"    class="columnTitleBlue"/></Column>
+                        <Column><Text text="Actions"  class="columnTitleBlue"/></Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text  text="{local>purchaserequisitionitem}" class="itemNumberGrey"/>
+                                <Input value="{local>material}" type="Text"   placeholder="Material" class="itemInput"/>
+                                <Input value="{local>requestedquantity}" type="Number" placeholder="Qty"   class="itemInput"/>
+                                <Input value="{local>purchaserequisitionprice}" type="Number" placeholder="Price" class="itemInput"/>
+                                <HBox class="itemActions">
+                                    <Button icon="sap-icon://delete" type="Reject" press="onDeletePRItem"/>
+                                </HBox>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+
+                <Button text="Add Item"
+                        icon="sap-icon://add"
+                        type="Emphasized"
+                        press="onAddPRItem"
+                        class="addItemButton adminCreateButton"/>
+            </VBox>
+
+        </VBox>
+
+        <beginButton>
+            <Button text="Save" type="Emphasized" press="onSavePR" class="adminCreateButton pulseButton"/>
+        </beginButton>
+        <endButton>
+            <Button text="Cancel" type="Reject" press="onCancelPR"/>
+        </endButton>
+    </Dialog>
+
+    <!-- =============================== -->
+    <!-- DIALOG: CREATE / EDIT PO (XML, styled with your classes) -->
+    <!-- =============================== -->
+    <Dialog id="poCreateDialog"
+            title="{local>/poDialogTitle}"
+            class="sapUiContentPadding"
+            stretch="true"
+            afterClose="onDialogClose">
+
+        <VBox class="sapUiSmallMargin">
+
+            <Title text="General Information" level="H2" class="dialogHeader titleH2"/>
+
+            <Label text="Purchasing Doc. Type"/>
+            <Select selectedKey="{local>/currentPO/podocType}">
+                <items>
+                    <core:Item key="NB" text="Standard PO (NB)"/>
+                </items>
+            </Select>
+
+            <Label text="Company Code"/>
+            <Input value="{local>/currentPO/companycode}" placeholder="Company Code"/>
+
+            <Label text="Purchasing Organization"/>
+            <Input value="{local>/currentPO/purchasingorganization}" placeholder="Purch. Org"/>
+
+            <Label text="Purchasing Group"/>
+            <Input value="{local>/currentPO/purchasinggroup}" placeholder="Purch. Group"/>
+
+            <Label text="Supplier"/>
+            <Input value="{local>/currentPO/supplier}" placeholder="Supplier Code"/>
+
+            <!-- ITEMS -->
+            <Title text="Items" level="H2" class="dialogHeader titleH2"/>
+
+            <VBox class="itemsCard">
+                <Table id="poItemsTable" items="{local>/currentPO/items}" class="itemsTable elevatedTable">
+                    <columns>
+                        <Column><Text text="Item"        class="columnTitleBlue"/></Column>
+                        <Column><Text text="Material"    class="columnTitleBlue"/></Column>
+                        <Column><Text text="Short Text"  class="columnTitleBlue"/></Column>
+                        <Column><Text text="Plant"       class="columnTitleBlue"/></Column>
+                        <Column><Text text="Order Qty"   class="columnTitleBlue"/></Column>
+                        <Column><Text text="Unit"        class="columnTitleBlue"/></Column>
+                        <Column><Text text="Actions"     class="columnTitleBlue"/></Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text  text="{local>purchaseorderitem}" class="itemNumberGrey"/>
+                                <Input value="{local>material}" type="Text" placeholder="Material" class="itemInput"/>
+                                <Input value="{local>purchaseorderitemtext}" type="Text" placeholder="Short Text" class="itemInput"/>
+                                <Input value="{local>plant}" type="Text" placeholder="Plant" class="itemInput"/>
+                                <Input value="{local>netpricequantity}" type="Number" placeholder="Qty" class="itemInput"/>
+                                <Input value="{local>purchaseorderquantityunit}" type="Text" placeholder="Unit" class="itemInput"/>
+                                <HBox class="itemActions">
+                                    <Button icon="sap-icon://delete" type="Reject" press="onDeletePOItem"/>
+                                </HBox>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+
+                <Button text="Add Item"
+                        icon="sap-icon://add"
+                        type="Emphasized"
+                        press="onAddPOItem"
+                        class="addItemButton adminCreateButton"/>
+            </VBox>
+
+        </VBox>
+
+        <beginButton>
+            <Button text="Save" type="Emphasized" press="onSavePO" class="adminCreateButton pulseButton"/>
+        </beginButton>
+        <endButton>
+            <Button text="Cancel" type="Reject" press="onCancelPO"/>
+        </endButton>
+    </Dialog>
+
+</mvc:View>

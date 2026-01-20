@@ -1,0 +1,125 @@
+{
+  "_version": "1.81.0",
+  "sap.app": {
+    "id": "project1",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json"
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": false,
+    "dependencies": {
+      "minUI5Version": "1.143.2",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.ui.layout": {},
+        "sap.f": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "project1.i18n.i18n"
+        }
+      },
+      "mockData": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "data.json"
+      },
+      "session": {
+        "type": "sap.ui.model.json.JSONModel"
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "rootView": {
+      "viewName": "project1.view.App",
+      "type": "XML",
+      "id": "App",
+      "async": true
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "controlId": "app",
+        "controlAggregation": "pages",
+        "viewType": "XML",
+        "viewPath": "project1.view",
+        "async": true
+      },
+      "routes": [
+        {
+          "name": "RouteAuth",
+          "pattern": "",
+          "target": "TargetAuth"
+        },
+        {
+          "name": "RouteAdmin",
+          "pattern": "admin",
+          "target": "TargetAdmin"
+        },
+        {
+          "name": "Routewelcome",
+          "pattern": "welcome",
+          "target": "Targetwelcome"
+        },
+        {
+          "name": "RouteSupplier",
+          "pattern": "supplier",
+          "target": "TargetSupplier"
+        },
+        {
+          "name": "RouteCustomer",
+          "pattern": "customer",
+          "target": "TargetCustomer"
+        }
+      ],
+      "targets": {
+        "Targetwelcome": {
+          "viewName": "welcome",
+          "id": "welcome"
+        },
+        "TargetAdmin": {
+          "viewName": "Admin",
+          "id": "admin"
+        },
+        "TargetSupplier": {
+          "viewName": "Supplier",
+          "id": "supplier"
+        },
+        "TargetCustomer": {
+          "viewName": "Customer",
+          "id": "customer"
+        },
+        "TargetAuth": {
+          "viewName": "Auth",
+          "id": "auth"
+        }
+      }
+    }
+  }
+}

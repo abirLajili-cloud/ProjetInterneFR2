@@ -1,0 +1,187 @@
+
+<mvc:View
+    controllerName="project1.controller.Supplier"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form">
+
+    <Page id="supplierPage" title="Purchase Orders" class="sapUiContentPadding">
+
+        <content>
+
+            <!-- =============================== -->
+            <!-- TOP BAR: Search (left) + Status (right) -->
+            <!-- =============================== -->
+            <HBox class="adminHeaderRow sapUiMediumMarginBottom">
+                <SearchField width="320px"
+                             placeholder="Search purchase orders..."
+                             liveChange="onSearch"/>
+
+                <SegmentedButton selectionChange="onStatusSegmentChange"
+                                 selectedKey="ALL"
+                                 class="segmentedButtonStyled">
+                    <items>
+                        <SegmentedButtonItem key="ALL" text="All"/>
+                        <SegmentedButtonItem key="OPEN" text="Open"/>
+                        <SegmentedButtonItem key="ACK" text="Acknowledged"/>
+                    </items>
+                </SegmentedButton>
+            </HBox>
+
+            <!-- =============================== -->
+            <!-- CENTERED TABLE -->
+            <!-- =============================== -->
+            <HBox class="supplierTableWrapper" justifyContent="Center">
+                <VBox width="100%">
+
+                    <Table id="poTable"
+                           items="{mockData>/purchaseOrders}"
+                           growing="true"
+                           growingScrollToLoad="true"
+                           class="supplierTable">
+
+                        <columns>
+                            <Column width="10rem"><Text text="PO" class="columnTitleBlue"/></Column>
+                            <Column width="10rem"><Text text="Supplier" class="columnTitleBlue"/></Column>
+                            <Column width="10rem"><Text text="Company" class="columnTitleBlue"/></Column>
+                            <Column width="10rem"><Text text="Purch. Org" class="columnTitleBlue"/></Column>
+                            <Column width="10rem"><Text text="Purch. Group" class="columnTitleBlue"/></Column>
+                            <Column width="8rem"><Text text="# Items" class="columnTitleBlue"/></Column>
+                            <Column width="12rem"><Text text="Total (calc)" class="columnTitleBlue"/></Column>
+                            <Column width="10rem"><Text text="Status" class="columnTitleBlue"/></Column>
+                            <Column width="20rem"><Text text="Actions" class="columnTitleBlue"/></Column>
+                        </columns>
+
+                        <items>
+                            <ColumnListItem>
+                                <cells>
+
+                                    <ObjectIdentifier title="{mockData>purchaseorder}"/>
+                                    <Text text="{mockData>supplier}"/>
+                                    <Text text="{mockData>companycode}"/>
+                                    <Text text="{mockData>purchasingorganization}"/>
+                                    <Text text="{mockData>purchasinggroup}"/>
+
+                                    <ObjectNumber number="{
+                                        parts:[{path:'mockData>items'}],
+                                        formatter:'.formatItemCount'
+                                    }"/>
+
+                                    <ObjectNumber unit="EA" number="{
+                                        parts:[{path:'mockData>items'}],
+                                        formatter:'.formatTotalQuantity'
+                                    }"/>
+
+                                    <ObjectStatus text="{= ${mockData>_status} || 'Open' }"
+                                                  state="{= ${mockData>_status} === 'Acknowledged' ? 'Success' : 'Warning'}"/>
+
+                                    <!-- ACTIONS: Details, Acknowledge, Create Order -->
+                                    <HBox class="adminActions">
+                                        <Button text="Details"
+                                                icon="sap-icon://display"
+                                                type="Transparent"
+                                                press="onOpenDetails"/>
+
+                                        <Button text="Acknowledge"
+                                                icon="sap-icon://accept"
+                                                type="Emphasized"
+                                                press="onAcknowledge"
+                                                class="pillButton"/>
+
+                                      
+                                    </HBox>
+
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+
+                    </Table>
+
+                </VBox>
+            </HBox>
+
+        </content>
+    </Page>
+
+
+    <!-- ================================================= -->
+    <!-- DIALOG 1 : PO DETAILS (lecture seule, card design) -->
+    <!-- ================================================= -->
+    <Dialog id="poDialog"
+            title="PO Details"
+            class="sapUiContentPadding"
+            stretch="true"
+            afterClose="onCloseDialog">
+
+        <VBox class="sapUiSmallMargin">
+
+            <ObjectHeader
+                title="{local>/currentPO/purchaseorder}"
+                number="{
+                    parts:[{path:'local>/currentPO/items'}],
+                    formatter:'.formatTotalQuantity'
+                }"
+                numberUnit="EA"/>
+
+            <!-- HEADER DETAILS -->
+            <VBox class="itemsCard">
+                <form:SimpleForm
+                    editable="false"
+                    layout="ResponsiveGridLayout"
+                    labelSpanL="3" labelSpanM="3"
+                    columnsL="2" columnsM="2">
+
+                    <Label text="Supplier"/>
+                    <Text text="{local>/currentPO/supplier}"/>
+
+                    <Label text="Company Code"/>
+                    <Text text="{local>/currentPO/companycode}"/>
+
+                    <Label text="Purchasing Organization"/>
+                    <Text text="{local>/currentPO/purchasingorganization}"/>
+
+                    <Label text="Purchasing Group"/>
+                    <Text text="{local>/currentPO/purchasinggroup}"/>
+                </form:SimpleForm>
+            </VBox>
+
+            <Title text="Items" class="itemsSectionTitle"/>
+
+            <VBox class="itemsCard">
+                <Table items="{local>/currentPO/items}" class="itemsTable">
+                    <columns>
+                        <Column><Text text="Item" class="columnBlue"/></Column>
+                        <Column><Text text="Material" class="columnBlue"/></Column>
+                        <Column><Text text="Description" class="columnBlue"/></Column>
+                        <Column><Text text="Plant" class="columnBlue"/></Column>
+                        <Column><Text text="Qty" class="columnBlue"/></Column>
+                        <Column><Text text="Unit" class="columnBlue"/></Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text text="{purchaseorderitem}" class="itemNumberGrey"/>
+                                <Text text="{material}"/>
+                                <Text text="{purchaseorderitemtext}"/>
+                                <Text text="{plant}"/>
+                                <ObjectNumber number="{netpricequantity}"/>
+                                <Text text="{purchaseorderquantityunit}"/>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </VBox>
+
+        </VBox>
+
+        <beginButton>
+            <Button text="Close" type="Emphasized" press="onCloseDialog"/>
+        </beginButton>
+    </Dialog>
+
+
+
+
+</mvc:View>
