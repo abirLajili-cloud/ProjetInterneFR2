@@ -1,0 +1,240 @@
+{
+  "users": [
+    {
+      "id": "U001",
+      "login": "000121212",
+      "role": "ADMIN",
+      "password": "000121212"
+    },
+    {
+      "id": "U002",
+      "login": "000131313",
+      "role": "SUPPLIER",
+      "password": "000131313"
+    },
+    {
+      "id": "U003",
+      "login": "000414141",
+      "role": "CUSTOMER",
+      "password": "000414141"
+    }
+  ],
+  "purchaseRequisitions": [
+    {
+      "purchaserequisition": "PR10001",
+      "purchaserequisitiontype": "NB",
+      "purchaserequisitiontext": "Requisition for office materials",
+      "supplier": "SUP001",
+      "plant": "1000",
+      "createdbyuser": "U003",
+      "_status": "Approved",
+      "items": [
+        {
+          "purchaserequisitionitem": "10",
+          "material": "MAT-001",
+          "requestedquantity": 50,
+          "baseunitisocode": "EA",
+          "purchreqnitemcurrency": "EUR",
+          "purchaserequisitionprice": 12.5
+        },
+        {
+          "purchaserequisitionitem": "20",
+          "material": "MAT-002",
+          "requestedquantity": 15,
+          "baseunitisocode": "EA",
+          "purchreqnitemcurrency": "EUR",
+          "purchaserequisitionprice": 33.0
+        }
+      ]
+    },
+    {
+      "purchaserequisition": "PR10002",
+      "purchaserequisitiontype": "NB",
+      "purchaserequisitiontext": "Requisition for electronic components",
+      "supplier": "SUP001",
+      "plant": "1100",
+      "createdbyuser": "U003",
+      "_status": "Pending",
+      "items": [
+        {
+          "purchaserequisitionitem": "10",
+          "material": "MAT-100",
+          "requestedquantity": 10,
+          "baseunitisocode": "EA",
+          "purchreqnitemcurrency": "EUR",
+          "purchaserequisitionprice": 120
+        }
+      ]
+    },
+    {
+      "purchaserequisition": "PR10003",
+      "purchaserequisitiontype": "NB",
+      "purchaserequisitiontext": "Printer repair service",
+      "supplier": "SUP002",
+      "plant": "1200",
+      "createdbyuser": "U003",
+      "_status": "Rejected",
+      "items": [
+        {
+          "purchaserequisitionitem": "10",
+          "material": "SERV-001",
+          "requestedquantity": 1,
+          "baseunitisocode": "EA",
+          "purchreqnitemcurrency": "EUR",
+          "purchaserequisitionprice": 200
+        }
+      ]
+    },
+    {
+      "purchaserequisition": "PR10004",
+      "purchaserequisitiontype": "NB",
+      "purchaserequisitiontext": "Requisition for safety helmets",
+      "supplier": "SUP003",
+      "plant": "1300",
+      "createdbyuser": "U003",
+      "_status": "Approved",
+      "items": [
+        {
+          "purchaserequisitionitem": "10",
+          "material": "MAT-H001",
+          "requestedquantity": 60,
+          "baseunitisocode": "EA",
+          "purchreqnitemcurrency": "EUR",
+          "purchaserequisitionprice": 18
+        }
+      ]
+    },
+    {
+      "purchaserequisition": "PR10005",
+      "purchaserequisitiontype": "RV",
+      "purchaserequisitiontext": "Requisition for IT equipment",
+      "supplier": "SUP004",
+      "plant": "1400",
+      "createdbyuser": "U003",
+      "_status": "Pending",
+      "items": [
+        {
+          "purchaserequisitionitem": "10",
+          "material": "MAT-LAPTOP",
+          "requestedquantity": 5,
+          "baseunitisocode": "EA",
+          "purchreqnitemcurrency": "EUR",
+          "purchaserequisitionprice": 850
+        }
+      ]
+    }
+  ],
+  "purchaseOrders": [
+    {
+      "purchaseorder": "PO4500001",
+      "purchasingorganization": "ORG1",
+      "purchasinggroup": "A10",
+      "companycode": "1000",
+      "supplier": "SUP001",
+      "createdbyuser": "U001",
+      "_status": "Open",
+      "items": [
+        {
+          "purchaseorderitem": "10",
+          "material": "MAT-001",
+          "purchaseorderitemtext": "Office Chair",
+          "plant": "1000",
+          "netpricequantity": 10,
+          "purchaseorderquantityunit": "EA"
+        },
+        {
+          "purchaseorderitem": "20",
+          "material": "MAT-002",
+          "purchaseorderitemtext": "Office Desk",
+          "plant": "1000",
+          "netpricequantity": 5,
+          "purchaseorderquantityunit": "EA"
+        }
+      ]
+    },
+    {
+      "purchaseorder": "PO4500002",
+      "purchasingorganization": "ORG1",
+      "purchasinggroup": "A20",
+      "companycode": "1100",
+      "supplier": "SUP002",
+      "createdbyuser": "U001",
+      "_status": "Acknowledged",
+      "items": [
+        {
+          "purchaseorderitem": "10",
+          "material": "MAT-500",
+          "purchaseorderitemtext": "Laptop",
+          "plant": "1100",
+          "netpricequantity": 3,
+          "purchaseorderquantityunit": "EA"
+        }
+      ]
+    },
+    {
+      "purchaseorder": "PO4500003",
+      "purchasingorganization": "ORG2",
+      "purchasinggroup": "A30",
+      "companycode": "1200",
+      "supplier": "SUP003",
+      "createdbyuser": "U001",
+      "_status": "Open",
+      "items": [
+        {
+          "purchaseorderitem": "10",
+          "material": "MAT-H002",
+          "purchaseorderitemtext": "Safety Mask",
+          "plant": "1200",
+          "netpricequantity": 40,
+          "purchaseorderquantityunit": "EA"
+        }
+      ]
+    },
+    {
+      "purchaseorder": "PO4500004",
+      "purchasingorganization": "ORG1",
+      "purchasinggroup": "A10",
+      "companycode": "1300",
+      "supplier": "SUP004",
+      "createdbyuser": "U001",
+      "_status": "Rejected",
+      "items": [
+        {
+          "purchaseorderitem": "10",
+          "material": "MAT-SCREEN",
+          "purchaseorderitemtext": "Monitor 27 inch",
+          "plant": "1300",
+          "netpricequantity": 8,
+          "purchaseorderquantityunit": "EA"
+        }
+      ]
+    },
+    {
+      "purchaseorder": "PO4500005",
+      "purchasingorganization": "ORG5",
+      "purchasinggroup": "A50",
+      "companycode": "1400",
+      "supplier": "SUP001",
+      "createdbyuser": "U002",
+      "_status": "Open",
+      "items": [
+        {
+          "purchaseorderitem": "10",
+          "material": "MAT-PHONE",
+          "purchaseorderitemtext": "Smartphone",
+          "plant": "1400",
+          "netpricequantity": 12,
+          "purchaseorderquantityunit": "EA"
+        },
+        {
+          "purchaseorderitem": "20",
+          "material": "MAT-HEADSET",
+          "purchaseorderitemtext": "Bluetooth Headset",
+          "plant": "1400",
+          "netpricequantity": 20,
+          "purchaseorderquantityunit": "EA"
+        }
+      ]
+    }
+  ]
+}

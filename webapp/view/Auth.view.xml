@@ -1,0 +1,60 @@
+
+<mvc:View
+    controllerName="project1.controller.Auth"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form">
+
+    <Page showHeader="false" class="authPage">
+
+        <content>
+            <HBox class="authContainer">
+
+                <!-- LEFT SIDE (LOGIN FORM) -->
+                <VBox class="loginCard" width="50%" justifyContent="Center" alignItems="Center">
+                    <VBox width="70%">
+
+                        <Title text="Login" level="H1" class="authTitle"/>
+
+                        <Label text="Username or email" class="authLabel"/>
+                        <Input value="{local>/login}" placeholder="Enter your login" class="authInput"/>
+
+                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="authPasswordRow">
+                            <Label text="Password" class="authLabel"/>
+                            <Link text="Forgot password ?" press="onForgotPassword"/>
+                        </HBox>
+                        <Input value="{local>/password}" type="Password" placeholder="Enter password" class="authInput"/>
+
+                        <HBox alignItems="Center" class="sapUiSmallMarginTop">
+                            <CheckBox text="Remember me"/>
+                        </HBox>
+
+                        <Button text="Login"
+                                type="Emphasized"
+                                class="authLoginButton"
+                                press="onLogin"/>
+
+                        <HBox justifyContent="Center" class="sapUiSmallMarginTop">
+                        
+                        </HBox>
+
+                    </VBox>
+                </VBox>
+
+                <!-- RIGHT SIDE (ILLUSTRATION + TEXT) -->
+                <VBox class="loginIllustration" width="50%" justifyContent="Center" alignItems="Center">
+
+                    <Image src="img/login.png" width="70%"/>
+
+                    <Title text="Welcome Back" level="H2" class="illustrationTitle"/>
+
+                   
+
+                </VBox>
+
+            </HBox>
+        </content>
+    </Page>
+
+</mvc:View>

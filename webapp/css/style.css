@@ -1,0 +1,238 @@
+
+/* =============================== */
+/* NAVBAR                          */
+/* =============================== */
+.adminNavbarContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.adminNavbar {
+  gap: 20px;
+  background: #ffffff;
+  padding: 12px 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+.adminNavButton {
+  width: 230px;
+  border-radius: 10px !important;
+}
+
+/* =============================== */
+/* HEADER (title + search/create)  */
+/* =============================== */
+.adminHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerLeft .titleIcon {
+  color: #0A6ED1;
+  margin-right: 8px;
+}
+
+.titleH2 {
+  font-weight: 700 !important;
+}
+
+.searchFieldDecor .sapMSFF {
+  border-radius: 8px !important;
+}
+
+.adminSearchCreate {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.adminCreateButton {
+  border-radius: 8px !important;
+  padding: 0 14px !important;
+}
+
+/* subtle pulse on primary create */
+.pulseButton {
+  box-shadow: 0 6px 18px rgba(10,110,209,0.28) !important;
+}
+
+/* =============================== */
+/* TABLE (center + elevate)        */
+/* =============================== */
+.elevatedTable {
+  border-radius: 12px;
+  overflow: hidden; /* keep rounded corners */
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  background: #fff;
+}
+
+/* Column header with icon */
+.columnHeader {
+  gap: 6px;
+}
+
+.columnHeaderIcon {
+  color: #0A6ED1;
+  opacity: 0.9;
+}
+
+/* Blue column titles */
+.columnTitleBlue {
+  color: #0A6ED1 !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+}
+
+/* Row spacing + hover */
+.sapMListTblCell {
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+}
+
+#adminPage .sapMListTblRow:hover {
+  background: #F8FBFF;
+}
+
+/* ID cell (avatar + identifier) */
+.idCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.idAvatar {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.idObject .sapMObjIdentifierTitle {
+  font-weight: 700 !important;
+}
+
+/* Inline icon + text pair (e.g., plant, supplier) */
+.withIcon {
+  gap: 6px;
+}
+
+.inlineIcon {
+  color: #6b6b6b;
+}
+
+/* Status pill + Type pill */
+.statusPill .sapMObjStatusText,
+.typePill .sapMObjStatusText {
+  font-weight: 700 !important;
+}
+
+.statusPill .sapUiIcon,
+.typePill .sapUiIcon {
+  margin-right: 4px;
+}
+
+/* Actions group */
+.adminActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Ellipsis for long descriptions */
+.ellipsis {
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* wrap to 2 lines then cut */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* =============================== */
+/* DIALOGS                         */
+/* =============================== */
+.dialogHeader {
+  margin-bottom: 8px;
+}
+
+.dialogHeader .statusPill .sapMObjStatusText {
+  font-size: 0.95rem;
+}
+
+/* Form labels tone */
+.sapUiSmallMargin .sapMLabel,
+.sapUiLargeMarginBottom .sapMLabel {
+  color: #555 !important;
+}
+
+/* Enhance object-like titles in dialogs */
+.sapMOHTitle {
+  font-size: 24px !important;
+  font-weight: bold !important;
+}
+
+/* =============================== */
+/* AUTH (kept from your original)  */
+/* =============================== */
+.authPage {
+  background: linear-gradient(#2D52FF 40%, #DDE7FF 40%);
+}
+
+.authContainer {
+  width: 50%;
+  height: 75vh;
+  margin: auto;
+  margin-top: 12vh;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  overflow: hidden;
+}
+
+.loginCard { padding: 3rem; background: white; }
+
+.authTitle {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #2D52FF;
+  font-weight: 700;
+  font-size: medium;
+}
+
+.authLabel { color: #666; font-size: 0.95rem; margin-top: 1rem; }
+
+.authInput {
+  width: 100%;
+  margin-top: 0.5rem;
+  margin-bottom: 0.7rem;
+  border-radius: 8px !important;
+  background: #F4F7FF;
+  padding: 0.5rem !important;
+}
+
+.authLoginButton {
+  margin-top: 1.5rem;
+  width: 100%;
+  border-radius: 8px !important;
+  background: #2D52FF !important;
+  color: white !important;
+}
+
+.authPasswordRow { margin-top: 1rem; }
+
+.loginIllustration {
+  padding: 3rem;
+  background: #F8FAFF;
+  border-left: 1px solid #E3E8F5;
+}
+
+.illustrationTitle {
+  color: #333;
+  margin-top: 1rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.illustrationText {
+  text-align: center;
+  width: 80%;
+  margin-top: 0.5rem;
+  color: #666;
+}
