@@ -1,1 +1,33 @@
 
+# name: Frontend CI (UI5)
+#
+# on:
+#   push:
+#     branches: ["main"]          # Lance la pipeline à chaque push sur main
+#   pull_request:
+#     branches: ["main"]          # Lance la pipeline pour chaque PR vers main
+#
+# jobs:
+#   build-ui5:                     # Nom du job principal
+#     runs-on: ubuntu-latest       # Machine GitHub utilisée pour exécuter le job
+#
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4   # Récupère le code depuis GitHub
+#
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4 # Installe Node.js sur la machine
+#         with:
+#           node-version: "18"        # Utilise la version 18 de Node.js
+#
+#       - name: Install dependencies
+#         run: npm ci                 # Installe les dépendances depuis package-lock.json
+#
+#       - name: Build UI5 app
+#         run: npm run build          # Lance le build UI5 (création du dossier dist/)
+#
+#       - name: Upload dist artifact
+#         uses: actions/upload-artifact@v4   # Envoie le dossier dist/ comme artefact
+#         with:
+#           name: dist                      # Nom de l’artefact
+#           path: dist                      # Chemin du dossier à uploader
