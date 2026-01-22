@@ -1,0 +1,127 @@
+<mvc:View
+  controllerName="project1.controller.Home"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <Page id="homePage" showHeader="false" class="bizLandingPage">
+    <content>
+
+      <VBox class="bizBg" width="100%" height="100%">
+
+        <!-- ================= TOP NAVBAR ================= -->
+        <HBox class="bizTopNav" justifyContent="SpaceBetween" alignItems="Center">
+
+          <!-- Brand -->
+          <HBox class="bizBrand" alignItems="Center">
+            <VBox class="bizLogoBox"/>
+            <Text text="SMART PROCUREMENT" class="bizBrandText"/>
+          </HBox>
+
+          <!-- Menu -->
+      
+          <HBox class="bizMenu" alignItems="Center" wrap="Wrap">
+              <Button
+      text="Home"
+      icon="sap-icon://nav-back"
+      type="Transparent"
+      press="onGoToLanding"
+      class="bizMenuLink"/>
+           
+          </HBox>
+
+        </HBox>
+
+        <!-- ================= HERO ================= -->
+        <VBox class="bizHero" alignItems="Center" justifyContent="Center">
+
+          <!-- Title + subtitle -->
+          <VBox class="bizHeroLeft" width="100%" alignItems="Center">
+            <Title
+              text="Choose Your Workspace"
+              level="H1"
+              class="bizHeroTitle"/>
+
+            <Text
+              text="Select your role to access the right experience"
+              class="bizHeroSubtitle"/>
+
+            <!-- Trust indicators -->
+            <HBox
+              class="bizMiniRow"
+              alignItems="Center"
+              wrap="Wrap"
+              justifyContent="Center">
+
+              <HBox class="bizMiniItem" alignItems="Center">
+                <core:Icon src="sap-icon://locked" class="bizMiniIcon"/>
+                <Text text="Secure access" class="bizMiniText"/>
+              </HBox>
+
+              <HBox class="bizMiniItem" alignItems="Center">
+                <core:Icon src="sap-icon://approvals" class="bizMiniIcon"/>
+                <Text text="Approval workflow" class="bizMiniText"/>
+              </HBox>
+
+              <HBox class="bizMiniItem" alignItems="Center">
+                <core:Icon src="sap-icon://inspect" class="bizMiniIcon"/>
+                <Text text="Traceability" class="bizMiniText"/>
+              </HBox>
+            </HBox>
+          </VBox>
+
+          <!-- ================= QUICK ACTIONS (FOCUS AREA) ================= -->
+          <VBox
+            class="bizIllustrationCard1"
+            width="100%"
+            alignItems="Center">
+
+            <Title
+              text="Quick actions"
+              level="H3"
+              class="bizCardTitle"/>
+
+            <Text
+              text="Jump directly to your role dashboard."
+              class="bizCardText"/>
+
+            <HBox
+              class="bizHeroBtns"
+              alignItems="Center"
+              justifyContent="Center"
+              wrap="Wrap">
+
+              <Button
+                text="Admin"
+                icon="sap-icon://manager"
+                type="Emphasized"
+                press="onGoAdmin"
+                class="bizNavCta"/>
+
+              <Button
+                text="Customer"
+                icon="sap-icon://employee"
+                press="onGoCustomer"
+                class="bizNavCta"/>
+
+              <Button
+                text="Supplier"
+                icon="sap-icon://shipping-status"
+                press="onGoSupplier"
+                class="bizNavCta"/>
+            </HBox>
+
+          </VBox>
+
+        </VBox>
+
+        <!-- ================= FOOTER ================= -->
+        <VBox class="bizFooter" alignItems="Center">
+          <Text text="Smart Procurement • Home" class="bizFooterText"/>
+        </VBox>
+
+      </VBox>
+
+    </content>
+  </Page>
+</mvc:View>

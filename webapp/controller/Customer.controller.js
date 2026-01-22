@@ -59,6 +59,29 @@ sap.ui.define([
             oLocal.setProperty("/dialogTitle", "Create Requisition");
             this.byId("prDialog").open();
         },
+         onGoBack: function () {
+      const oHistory = History.getInstance();
+      const sPreviousHash = oHistory.getPreviousHash();
+
+      if (sPreviousHash !== undefined) {
+        // navigation browser (historique réel)
+        window.history.go(-1);
+      } else {
+        // fallback propre
+        this.getOwnerComponent()
+          .getRouter()
+          .navTo("RouteHome", {}, true);
+      }
+    },
+
+    /* ========================================================= */
+    /* Logout : toujours vers Landing                            */
+    /* ========================================================= */
+    onLogoutToLanding: function () {
+      this.getOwnerComponent()
+        .getRouter()
+        .navTo("RouteLanding", {}, true);
+    },
 
         /* ===========================
          * EDIT DIALOG

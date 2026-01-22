@@ -1,0 +1,13 @@
+
+<mvc:View
+  controllerName="project1.controller.Chatbot"
+  xmlns="sap.m"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns:core="sap.ui.core">
+
+  <core:HTML
+    id="chatbotHtml"
+    sanitizeContent="false"
+    content="&lt;div id='chatbot-anchor' style='display:none'&gt;&lt;/div&gt;" />
+
+</mvc:View>

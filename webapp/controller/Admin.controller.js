@@ -177,11 +177,11 @@ sap.ui.define([
 
       oLocal.setProperty("/currentPR", {
         purchaserequisition: "",
-        purchaserequisitiontext: "Abir LAJILI " + new Date().toLocaleString(),
-        purchaserequisitiontype: "NB",
-        plant: "1000",
-        supplier: "SUP001",
-        createdbyuser: "U001",
+        purchaserequisitiontext: " ",
+        purchaserequisitiontype: "",
+        plant: "",
+        supplier: "",
+        createdbyuser: "",
         items: []
       });
 
@@ -433,6 +433,30 @@ sap.ui.define([
         .then(() => MessageToast.show("PO rejected"))
         .catch(() => MessageToast.show("Failed to save data.json"));
     },
+     onGoBack: function () {
+      const oHistory = History.getInstance();
+      const sPreviousHash = oHistory.getPreviousHash();
+
+      if (sPreviousHash !== undefined) {
+        // navigation browser (historique réel)
+        window.history.go(-1);
+      } else {
+        // fallback propre
+        this.getOwnerComponent()
+          .getRouter()
+          .navTo("RouteHome", {}, true);
+      }
+    },
+
+    /* ========================================================= */
+    /* Logout : toujours vers Landing                            */
+    /* ========================================================= */
+    onLogoutToLanding: function () {
+      this.getOwnerComponent()
+        .getRouter()
+        .navTo("RouteLanding", {}, true);
+    },
+
 
     // ========================
     // PERSIST: write webapp/data.json (no download)

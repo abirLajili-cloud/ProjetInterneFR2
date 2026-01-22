@@ -73,8 +73,18 @@
       },
       "routes": [
         {
+        "pattern": "",
+        "name": "RouteLanding",
+        "target": "TargetLanding"
+      },
+      {
+          "name": "RouteHome",
+          "pattern": "Home",
+          "target": "TargetHome"
+        },
+        {
           "name": "RouteAuth",
-          "pattern": "",
+          "pattern": "Auth",
           "target": "TargetAuth"
         },
         {
@@ -99,10 +109,19 @@
         }
       ],
       "targets": {
+         "TargetLanding": {
+          "viewName": "Landing",
+          "id": "landing"
+        },
+         "TargetHome": {
+          "viewName": "Home",
+          "id": "home"
+        },
         "Targetwelcome": {
           "viewName": "welcome",
           "id": "welcome"
         },
+       
         "TargetAdmin": {
           "viewName": "Admin",
           "id": "admin"

@@ -1,0 +1,153 @@
+<mvc:View
+  controllerName="project1.controller.Landing"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <Page id="landingPage" showHeader="false" class="bizLandingPage">
+    <content>
+
+      <!-- Background -->
+      <VBox class="bizBg" width="100%" height="100%">
+
+        <!-- Top Navbar -->
+        <HBox class="bizTopNav" justifyContent="SpaceBetween" alignItems="Center">
+
+          <!-- Brand -->
+          <HBox class="bizBrand" alignItems="Center">
+            <VBox class="bizLogoBox"/>
+            <Text text="SMART PROCUREMENT" class="bizBrandText"/>
+          </HBox>
+
+          <!-- Menu -->
+          <HBox class="bizMenu" alignItems="Center" wrap="Wrap" >
+            <Link text="Home" press="onScrollTop" class="bizBtnGhost"/>
+            <Link text="About" press="onScrollToAbout" class="bizMenuLink" />
+            <Link text="Features" press="onScrollToFeatures" class="bizMenuLink"/>
+            <Link text="Workspaces" press="onScrollToWorkspaces" class="bizMenuLink"/>
+            <Link text="Contact" press="onScrollToContact" class="bizMenuLink"/>
+          </HBox>
+
+          <!-- CTA -->
+          <Button
+            text="Get Started"
+            type="Emphasized"
+            icon="sap-icon://log"
+            press="onGoToLogin"
+            class="bizNavCta"/>
+        </HBox>
+
+        <!-- HERO (left text, right image) -->
+        <HBox class="bizHero" justifyContent="SpaceBetween" alignItems="Center" wrap="Wrap">
+
+          <!-- Left -->
+          <VBox class="bizHeroLeft" width="52%">
+            <Title text="Purchase Requisitions &amp; Purchase Orders
+            " level="H1" class="bizHeroTitle"/>
+            
+           
+
+            <HBox class="bizHeroBtns" alignItems="Center" wrap="Wrap">
+             
+              <Button
+                text="More info"
+                type="Transparent"
+                icon="sap-icon://hint"
+                press="onScrollToFeatures"
+                class="bizBtnGhost"/>
+            </HBox>
+
+            <!-- small trust line -->
+            <HBox class="bizMiniRow" alignItems="Center" wrap="Wrap">
+              <HBox class="bizMiniItem" alignItems="Center">
+                <core:Icon src="sap-icon://accept" class="bizMiniIcon"/>
+                <Text text="Fast approvals" class="bizMiniText"/>
+              </HBox>
+              <HBox class="bizMiniItem" alignItems="Center">
+                <core:Icon src="sap-icon://locked" class="bizMiniIcon"/>
+                <Text text="Role-based access" class="bizMiniText"/>
+              </HBox>
+              <HBox class="bizMiniItem" alignItems="Center">
+                <core:Icon src="sap-icon://inspect" class="bizMiniIcon"/>
+                <Text text="Full traceability" class="bizMiniText"/>
+              </HBox>
+            </HBox>
+          </VBox>
+
+          <!-- Right -->
+          <VBox class="bizHeroRight" width="44%" alignItems="End">
+            <VBox class="bizIllustrationCard">
+              <Image src="img/Landing_Pic.png" class="bizIllustration"/>
+            </VBox>
+          </VBox>
+
+        </HBox>
+
+        <!-- Wave separator -->
+        <VBox class="bizWave"/>
+
+        <!-- SECTION: Features -->
+        <VBox id="featuresSection" alignItems="Center" class="workspacesSection">
+          <Title text="What You Can Do" level="H2" class="bizSectionTitle"/>
+          
+
+          <HBox class="bizCardGrid" wrap="Wrap" justifyContent="SpaceBetween">
+            <VBox class="bizCard">
+              <core:Icon src="sap-icon://cart" class="bizCardIcon"/>
+              <Title text="Smart Procurement" level="H3" class="bizCardTitle"/>
+              <Text text="Centralized PR/PO management with clean lists." class="bizCardText"/>
+            </VBox>
+
+            <VBox class="bizCard">
+              <core:Icon src="sap-icon://approvals" class="bizCardIcon"/>
+              <Title text="Approvals" level="H3" class="bizCardTitle"/>
+              <Text text="Approve or reject in one click with status updates." class="bizCardText"/>
+            </VBox>
+
+            <VBox class="bizCard">
+              <core:Icon src="sap-icon://group" class="bizCardIcon"/>
+              <Title text="Workspaces" level="H3" class="bizCardTitle"/>
+              <Text text="Admin / Customer / Supplier screens for each role." class="bizCardText"/>
+            </VBox>
+
+            <VBox class="bizCard">
+              <core:Icon src="sap-icon://inspect" class="bizCardIcon"/>
+              <Title text="Traceability" level="H3" class="bizCardTitle"/>
+              <Text text="Track lifecycle and decisions in real time." class="bizCardText"/>
+            </VBox>
+          </HBox>
+        </VBox>
+
+        <!-- SECTION: Workspaces -->
+        <VBox id="workspacesSection" alignItems="Center" class="workspacesSection">
+          <Title text="Workspaces" level="H2" class="bizSectionTitle"/>
+          <Text text="Choose the right experience depending on your role." class="bizSectionSub"/>
+
+          <HBox class="bizCardGrid" wrap="Wrap" justifyContent="SpaceBetween">
+            <VBox class="bizCard bizCardSoftBlue">
+              <Title text="Admin" level="H3" class="bizCardTitle"/>
+              <Text text="Full access to PR &amp; PO management." class="bizCardText"/>
+            </VBox>
+
+            <VBox class="bizCard bizCardSoftGreen">
+              <Title text="Customer" level="H3" class="bizCardTitle"/>
+              <Text text="Create and track Purchase Requisitions &amp; Orders." class="bizCardText"/>
+            </VBox>
+
+            <VBox class="bizCard bizCardSoftOrange">
+              <Title text="Supplier" level="H3" class="bizCardTitle"/>
+              <Text text="Consult Purchase Orders and respond (accept/refuse)." class="bizCardText"/>
+            </VBox>
+          </HBox>
+        </VBox>
+
+        <!-- Footer -->
+        <VBox id="contactSection" class="bizFooter" alignItems="Center">
+          <Text text="Smart Procurement " class="bizFooterText"/>
+        </VBox>
+
+      </VBox>
+
+    </content>
+  </Page>
+</mvc:View>

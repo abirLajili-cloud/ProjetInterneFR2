@@ -172,14 +172,16 @@
 /* AUTH (kept from your original)  */
 /* =============================== */
 .authPage {
-  background: linear-gradient(#2D52FF 40%, #DDE7FF 40%);
+  background: radial-gradient(1200px 700px at 15% 10%, rgba(255, 90, 95, 0.22), rgba(0,0,0,0) 55%),
+              radial-gradient(900px 600px at 85% 20%, rgba(78, 205, 196, 0.14), rgba(0,0,0,0) 60%),
+              linear-gradient(135deg, #e1e5f1 0%, #c5d1f8 40%, #acc5f5 100%);
 }
 
 .authContainer {
   width: 50%;
-  height: 75vh;
+  height: 60vh;
   margin: auto;
-  margin-top: 12vh;
+  margin-top: 20vh;
   background: white;
   border-radius: 20px;
   box-shadow: 0 12px 40px rgba(0,0,0,0.15);
@@ -235,4 +237,510 @@
   width: 80%;
   margin-top: 0.5rem;
   color: #666;
+}
+/* =========================
+   SMART PROCUREMENT - Landing
+   Palette: dark modern + soft accents (less blue)
+   ========================= */
+
+.bizLandingPage {
+  height: 100%;
+}
+
+/* Background container */
+.bizBg {
+  min-height: 100vh;
+  padding: 22px 34px 0 34px;
+  box-sizing: border-box;
+
+  /* Dark gradient background */
+  background: radial-gradient(1200px 700px at 15% 10%, rgba(255, 90, 95, 0.22), rgba(0,0,0,0) 55%),
+              radial-gradient(900px 600px at 85% 20%, rgba(78, 205, 196, 0.14), rgba(0,0,0,0) 60%),
+              linear-gradient(135deg, #e1e5f1 0%, #c5d1f8 40%, #acc5f5 100%);
+}
+
+/* =========================
+   Top Navbar
+   ========================= */
+.bizTopNav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  padding: 14px 18px;
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.bizBrand {
+  gap: 12px;
+}
+
+.bizLogoBox {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+
+  background: linear-gradient(135deg, #FF5A5F, #FBB040);
+  box-shadow: 0 10px 25px rgba(255, 90, 95, 0.22);
+}
+
+.bizLogoBox1 {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+
+  background: linear-gradient(135deg, #FF5A5F, #FBB040);
+  box-shadow: 0 10px 25px rgba(255, 90, 95, 0.22);
+}
+.bizBrandText {
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  color: rgb(15, 1, 1);
+  font-size: 20px;
+}
+
+/* Menu links */
+.bizMenu {
+  gap: 10px;
+  text-decoration-color: #DDE7FF;
+ color: rgb(0, 0, 0);
+}
+
+.bizMenuLink {
+  color: rgb(3, 0, 0);
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 10px;
+}
+
+.bizMenuLink:hover {
+  background: rgba(39, 29, 177, 0.08);
+  color: rgba(14, 0, 0, 0.95);
+}
+
+/* CTA button */
+.bizNavCta {
+  border-radius: 12px;
+    font-size: 50px;
+}
+
+.bizNavCta .sapMBtnInner {
+  border-radius: 12px !important;
+  border: 0 !important;
+  width: auto;
+  background: linear-gradient(135deg, #eee7e3, #f0e2d7) !important;
+  color: #101425 !important;
+  box-shadow: 0 12px 30px rgba(255, 90, 95, 0.20);
+    font-size: 20px;
+}
+
+.bizNavCta .sapMBtnIcon {
+  color: #101425 !important;
+    font-size: 30px;
+}
+
+/* =========================
+   Hero section
+   ========================= */
+.bizHero {
+  padding: 46px 4px 24px 4px;
+  gap: 24px;
+}
+
+.bizHeroLeft {
+  padding: 18px 10px;
+}
+
+.bizHeroTitle {
+  color: rgba(8, 0, 0, 0.95);
+  font-weight: 800;
+  line-height: 1.05;
+  font-size: 40px;
+}
+
+.bizHeroSubtitle {
+  margin-top: 14px;
+  max-width: 620px;
+  color: rgb(0, 0, 0);
+  font-size: 20px;
+  line-height: 1.55;
+}
+
+/* Hero buttons */
+.bizHeroBtns {
+  margin-top: 18px;
+  gap: 12px;
+}
+
+.bizBtnGhost .sapMBtnInner {
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: rgba(0, 0, 0, 0.938) !important;
+}
+.bizBtnGhost1 .sapMBtnInner {
+  border-radius: 12px !important;
+  background: rgba(210, 10, 10, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: rgba(7, 0, 0, 0.88) !important;
+}
+
+.bizBtnGhost .sapMBtnIcon {
+  color: rgb(0, 0, 0) !important;
+}
+
+/* Mini trust row */
+.bizMiniRow {
+  margin-top: 16px;
+  gap: 12px;
+}
+
+.bizMiniItem {
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: radial-gradient(1200px 700px at 15% 10%, rgba(255, 90, 95, 0.22), rgba(0,0,0,0) 55%),
+              radial-gradient(900px 600px at 85% 20%, rgba(78, 205, 196, 0.14), rgba(0,0,0,0) 60%);
+          
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  gap: 8px;
+}
+
+.bizMiniIcon {
+  color: rgb(20, 1, 1);
+  font-size: 14px;
+}
+
+.bizMiniText {
+  color: rgba(17, 1, 1, 0.78);
+  font-size: 13px;
+}
+
+/* Right illustration */
+.bizHeroRight {
+  padding: 18px 10px;
+}
+
+.bizIllustrationCard {
+  width: 100%;
+  max-width: 520px;
+  padding: 14px;
+  border-radius: 22px;
+
+  background: radial-gradient(1200px 700px at 15% 10%, rgba(255, 90, 95, 0.22), rgba(0,0,0,0) 55%),
+              radial-gradient(900px 600px at 85% 20%, rgba(78, 205, 196, 0.14), rgba(0,0,0,0) 60%),
+              linear-gradient(135deg, #c7d0e7 0%, #a8b9f1 40%, #7899f5 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+}
+.bizIllustrationCard1 {
+  width: 100%;
+  max-width: 800px;
+  padding: 14px;
+  font-size: large;
+  border-radius: 22px;
+
+  background: radial-gradient(1200px 700px at 15% 10%, rgba(255, 90, 95, 0.22), rgba(0,0,0,0) 55%),
+              radial-gradient(900px 600px at 85% 20%, rgba(78, 205, 196, 0.14), rgba(0,0,0,0) 60%),
+              linear-gradient(135deg, #c7d0e7 0%, #a8b9f1 40%, #7899f5 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+}
+
+.bizIllustration {
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+}
+
+/* =========================
+   Wave separator
+   ========================= */
+.bizWave {
+  margin: 18px 0 6px 0;
+  height: 36px;
+  border-radius: 999px;
+
+  background: linear-gradient(90deg,
+    rgba(255, 90, 95, 0.18),
+    rgba(251, 176, 64, 0.14),
+    rgba(78, 205, 196, 0.12),
+    rgba(255, 255, 255, 0.06)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+/* =========================
+   Sections
+   ========================= */
+.bizSection {
+  padding: 42px 6px 18px 6px;
+  background: radial-gradient(1200px 700px at 15% 10%, rgba(255, 90, 95, 0.22), rgba(0,0,0,0) 55%),
+              radial-gradient(900px 600px at 85% 20%, rgba(78, 205, 196, 0.14), rgba(0,0,0,0) 60%),
+              linear-gradient(135deg, #c7d0e7 0%, #a8b9f1 40%, #7899f5 100%);
+ 
+}
+
+.bizSectionTitle {
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 800;
+  font-size: 30px;
+}
+
+.bizSectionSub {
+  margin-top: 6px;
+  color: rgba(255, 255, 255, 0.70);
+  font-size: 20px;
+}
+
+/* Card grid */
+.bizCardGrid {
+  margin-top: 18px;
+  gap: 16px;
+}
+
+/* Cards */
+.bizCard {
+  width: calc(25% - 12px);
+  min-width: 230px;
+
+  padding: 18px;
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+}
+
+.bizCardIcon {
+  color: rgba(10, 1, 1, 0.9);
+  font-size: 26px;
+}
+
+.bizCardTitle {
+  margin-top: 10px;
+  color: rgba(12, 1, 1, 0.92);
+  font-weight: 800;
+  font-size: 30px;
+}
+
+.bizCardText {
+  margin-top: 6px;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.45;
+}
+.workspacesSection {
+  margin-top: 18px;
+  padding: 38px 18px 26px 18px;
+  border-radius: 22px;
+ max-width: 2000px;
+  background: radial-gradient(1200px 700px at 15% 10%, rgba(255, 90, 95, 0.22), rgba(0,0,0,0) 55%),
+              radial-gradient(900px 600px at 85% 20%, rgba(78, 205, 196, 0.14), rgba(0,0,0,0) 60%),
+              linear-gradient(135deg, #c7d0e7 0%, #a8b9f1 40%, #7899f5 100%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.18);
+}
+/* Softer workspace colors (not heavy blue) */
+.bizCardSoftBlue {
+  background: rgba(78, 205, 196, 0.10);
+  border: 1px solid rgba(78, 205, 196, 0.22);
+}
+
+.bizCardSoftGreen {
+  background: rgba(46, 204, 113, 0.10);
+  border: 1px solid rgba(46, 204, 113, 0.22);
+}
+
+.bizCardSoftOrange {
+  background: rgba(251, 176, 64, 0.10);
+  border: 1px solid rgba(251, 176, 64, 0.22);
+}
+
+/* =========================
+   Footer
+   ========================= */
+.bizFooter {
+  margin-top: 28px;
+  padding: 26px 10px 34px 10px;
+  background: radial-gradient(1200px 700px at 15% 10%, rgba(255, 90, 95, 0.22), rgba(0,0,0,0) 55%),
+              radial-gradient(900px 600px at 85% 20%, rgba(78, 205, 196, 0.14), rgba(0,0,0,0) 60%),
+              linear-gradient(135deg, #c7d0e7 0%, #a8b9f1 40%, #7899f5 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 18px 18px 0 0;
+ 
+}
+
+.bizFooterText {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 13px;
+}
+
+/* =========================
+   Responsive adjustments
+   ========================= */
+@media (max-width: 1100px) {
+  .bizBg {
+    color: #eff0f4;
+    padding: 18px 18px 0 18px;
+   background: radial-gradient(1200px 700px at 15% 10%, rgba(255, 90, 95, 0.22), rgba(0,0,0,0) 55%),
+              radial-gradient(900px 600px at 85% 20%, rgba(78, 205, 196, 0.14), rgba(0,0,0,0) 60%),
+              linear-gradient(135deg, #c7d0e7 0%, #a8b9f1 40%, #7899f5 100%);
+  }
+}
+
+@media (max-width: 900px) {
+  .bizHeroLeft,
+  .bizHeroRight {
+    width: 100% !important;
+  }
+
+  .bizIllustrationCard {
+    max-width: 720px;
+  }
+
+  .bizCard {
+    width: calc(50% - 10px);
+  }
+
+  .bizTopNav {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 560px) {
+  .bizCard {
+    width: 100%;
+  }
+
+  .bizMenu {
+    display: none; /* keep navbar clean on mobile */
+    color: #f8f4f4;
+  }
+}
+
+/* ===== Workspaces section: force contrast (fix white text) ===== */
+.workspacesSection .bizSectionTitle,
+.workspacesSection .bizSectionSub,
+.workspacesSection .bizCardTitle,
+.workspacesSection .bizCardText {
+  color: #0f172a !important;   /* dark text */
+}
+
+.workspacesSection .bizSectionSub,
+.workspacesSection .bizCardText {
+  opacity: 0.82 !important;
+}
+
+/* Optionnel: rendre les cards plus nettes sur fond clair */
+.workspacesSection .bizCard {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Si tu veux que les 3 cards "Admin/Customer/Supplier" gardent la couleur,
+   on garde ton soft color mais on augmente le contraste */
+.workspacesSection .bizCardSoftBlue,
+.workspacesSection .bizCardSoftGreen,
+.workspacesSection .bizCardSoftOrange {
+  background: rgba(255, 255, 255, 0.55) !important; /* plus clean */
+}
+/* =====================================================
+   ADMIN TOP NAVBAR – LIGHT STYLE (independent)
+   ===================================================== */
+
+.adminTopNav {
+  padding: 14px 20px;
+  margin-bottom: 18px;
+
+  background: radial-gradient(1200px 700px at 15% 10%, rgba(255, 90, 95, 0.22), rgba(0,0,0,0) 55%),
+              radial-gradient(900px 600px at 85% 20%, rgba(78, 205, 196, 0.14), rgba(0,0,0,0) 60%),
+              linear-gradient(135deg, #c7d0e7 0%, #a8b9f1 40%, #7899f5 100%);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+
+  display: flex;
+}
+
+/* Brand */
+.adminBrand {
+  gap: 12px;
+}
+
+.adminLogoBox {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+
+  background: linear-gradient(135deg, #4c6bd2, #9fb2e8);
+}
+
+.adminBrandText {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #0f172a;
+}
+
+/* Center title */
+.adminNavTitle {
+  color: #1e293b;
+  font-weight: 700;
+}
+
+/* Actions */
+.adminNavActions {
+  gap: 8px;
+}
+
+/* Buttons */
+.adminNavBtn .sapMBtnInner {
+  border-radius: 10px !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  background: #a1c5f2 !important;
+  color: #0f172a !important;
+}
+
+.adminNavBtn .sapMBtnIcon {
+  color: #0f172a !important;
+}
+
+/* Logout slightly highlighted (still clean) */
+.adminLogoutBtn .sapMBtnInner {
+    background: #f6aeae !important;
+  border-color: rgba(220, 38, 38, 0.25) !important;
+  color: #b91c1c !important;
+}
+
+.adminLogoutBtn .sapMBtnIcon {
+    background: #f6aeae !important;
+  color: #b91c1c !important;
+}
+
+/* =====================================================
+   LANDING NAVBAR – MENU LINKS (WHITE TEXT)
+   ===================================================== */
+
+/* Texte du lien */
+.bizMenu .sapMLnk,
+.bizMenu .sapMLnk:visited {
+  color: #070000 !important;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* Hover */
+.bizMenu .sapMLnk:hover {
+  color: rgba(255, 255, 255, 0.85) !important;
+  text-decoration: none;
+}
+
+/* Focus / active (accessibilité) */
+.bizMenu .sapMLnk:focus,
+.bizMenu .sapMLnk:active {
+  color: #ffffff !important;
+  outline: none;
 }

@@ -1,35 +1,85 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>App Title</title>
-    <style>
-        html, body, body > div, #container, #container-uiarea {
-            height: 100%;
-        }
-    </style>
-    <script
-        id="sap-ui-bootstrap"
-        src="resources/sap-ui-core.js"
-        data-sap-ui-theme="sap_horizon"
-        data-sap-ui-resource-roots='{
-            "project1": "./"
-        }'
-        data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
-        data-sap-ui-compat-version="edge"
-        data-sap-ui-async="true"
-        data-sap-ui-frame-options="trusted"
-    ></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>App Title</title>
+
+  <!-- Content Security Policy to allow SAP CAI script + websocket -->
+  <meta http-equiv="Content-Security-Policy"
+        content="
+          default-src 'self';
+          script-src 'self' https://cdn.cai.tools.sap 'unsafe-inline';
+          connect-src 'self' https://cdn.cai.tools.sap wss://*.cai.tools.sap;
+          img-src 'self' data: https://cdn.cai.tools.sap;
+          style-src 'self' 'unsafe-inline';
+          frame-src https://*.cai.tools.sap;">
+
+  <!-- Full-height layout -->
+  <style>
+    html, body, body > div, #container, #container-uiarea {
+      height: 100%;
+    }
+    /* Chatbot bubble position */
+    #cai-webchat {
+      z-index: 9999 !important;
+      bottom: 16px !important;
+      right: 16px !important;
+    }
+  </style>
+
+  <!-- UI5 Bootstrap -->
+  <script
+    id="sap-ui-bootstrap"
+    src="resources/sap-ui-core.js"
+    data-sap-ui-theme="sap_horizon"
+    data-sap-ui-resource-roots='{
+      "project1": "./"
+    }'
+    data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
+    data-sap-ui-compat-version="edge"
+    data-sap-ui-async="true"
+    data-sap-ui-frame-options="trusted">
+  </script>
+
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body class="sapUiBody sapUiSizeCompact" id="content">
-    <div
-        data-sap-ui-component
-        data-name="project1"
-        data-id="container"
-        data-settings='{"id" : "project1"}'
-        data-handle-validation="true"
-    ></div>
+
+  <div
+    data-sap-ui-component
+    data-name="project1"
+    data-id="container"
+    data-settings='{"id" : "project1"}'
+    data-handle-validation="true">
+  </div>
+
+
+<!-- SAP CAI webchat script (AUTO-BOOT MODE) -->
+<script
+  src="https://cdn.cai.tools.sap/webchat/webchat.js"
+  channelId="3790994b-c20f-47cb-b6a6-40acda5f44dc"
+  token="2069e9c7261c13bc59692b7db63493e9"
+  id="cai-webchat"
+  data-cai-webchat="true">
+</script>
+
+<script>
+  // Optional: force bubble bottom-right
+  window.addEventListener("load", function () {
+    var el = document.getElementById("cai-webchat");
+    if (el) {
+      el.style.zIndex = "9999";
+      el.style.bottom = "16px";
+      el.style.right  = "16px";
+    }
+  });
+</script>
+
+
+
 </body>
 </html>

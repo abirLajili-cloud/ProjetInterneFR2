@@ -7,6 +7,40 @@
     xmlns:form="sap.ui.layout.form">
 
     <Page id="customerPage" class="sapUiContentPadding">
+     <!-- ================= ADMIN TOP NAVBAR (LIGHT) ================= -->
+<HBox class="adminTopNav" justifyContent="SpaceBetween" alignItems="Center">
+
+  <!-- Brand -->
+  <HBox class="adminBrand" alignItems="Center">
+    <VBox class="adminLogoBox"/>
+    <Text text="SMART PROCUREMENT" class="adminBrandText"/>
+  </HBox>
+
+  <!-- Center title -->
+  <HBox alignItems="Center">
+    <Title text="Customer Workspace" level="H3" class="adminNavTitle"/>
+  </HBox>
+
+  <!-- Actions -->
+  <HBox alignItems="Center" class="adminNavActions">
+
+    <Button
+      text="Go Back"
+      icon="sap-icon://nav-back"
+      type="Transparent"
+      press="onGoBack"
+      class="adminNavBtn"/>
+
+    <Button
+      text="Logout"
+      icon="sap-icon://log"
+      type="Transparent"
+      press="onLogoutToLanding"
+      class="adminNavBtn adminLogoutBtn"/>
+
+  </HBox>
+
+</HBox>
         <content>
 
             <!-- HEADER BAR -->
