@@ -1,0 +1,1428 @@
+"========================================================
+" BAdI: YY1_TOR_HEADER_MODIFY
+" Purpose: Fill custom fields on transportation order header
+"========================================================
+
+" Copy input data to output data first
+MOVE-CORRESPONDING transp_orders_in TO transp_orders_out.
+
+" Local variables
+DATA:
+  lv_add            TYPE string,
+  lv_carriername    TYPE c LENGTH 10,
+  lv_outd           TYPE c LENGTH 10,
+  lv_bill           TYPE string,
+  lv_custref        TYPE string,
+  lv_store          TYPE i_purchaseorderitemapi01-plant,
+  lv_sdnumber       TYPE i_outbounddeliveryitem-referencesddocument,
+  lv_orgname1       TYPE string,
+  lv_orgname2       TYPE string,
+  lv_count          TYPE string,
+  lv_countryname    TYPE string,
+  lv_region         TYPE string,
+  lv_postalcode     TYPE string,
+  lv_streetname     TYPE string,
+  lv_street         TYPE string,
+  lv_cityname       TYPE string,
+  lv_country        TYPE string,
+  lv_language       TYPE string,
+  lv_code           TYPE string,
+  lv_desc_code      TYPE string,
+  lv_desc_50        TYPE string,
+  lv_ctry           TYPE string,
+  lv_purchaseorder  TYPE i_purchaseorderitemapi01-purchaseorder,
+  lv_base_doc       TYPE i_transportationorderitem_2-transpbasedocument,
+  lv_len            TYPE i,
+  lv_offset         TYPE i,
+  lv_user_id        TYPE string,
+  lv_bp2            TYPE string,
+  lv_url            TYPE string,
+  lv_bpfname        TYPE string,
+  lv_q1             TYPE string,
+  lv_shipto         TYPE kunnr,
+  lv_q2             TYPE string,
+  lv_bpap           TYPE i_salesdocumentpartner-referencebusinesspartner,
+  lv_sldtocust      TYPE string,
+  lv_shiptocust     TYPE string,
+  lv_response_body  TYPE string,
+  lv_refdocument    TYPE vbeln_vl,
+  lv_partner_for_bp TYPE i_outbounddelivery-shiptoparty.
+
+" Loop through incoming transportation orders
+LOOP AT transp_orders_in ASSIGNING FIELD-SYMBOL(<transp_order_in>).
+
+  " Find corresponding output row
+  READ TABLE transp_orders_out ASSIGNING FIELD-SYMBOL(<transp_order_out>)
+    WITH KEY transportationorderuuid = <transp_order_in>-transportationorderuuid.
+
+  IF <transp_order_out> IS NOT ASSIGNED.
+    CONTINUE.
+  ENDIF.
+
+  " Process only Transportation Orders
+  IF <transp_order_in>-transportationordercategory <> 'TO'.
+    CONTINUE.
+  ENDIF.
+
+  CLEAR:
+    lv_add,
+    lv_carriername,
+    lv_outd,
+    lv_bill,
+    lv_custref,
+    lv_store,
+    lv_sdnumber,
+    lv_orgname1,
+    lv_orgname2,
+    lv_count,
+    lv_countryname,
+    lv_region,
+    lv_postalcode,
+    lv_streetname,
+    lv_street,
+    lv_cityname,
+    lv_country,
+    lv_language,
+    lv_code,
+    lv_desc_code,
+    lv_desc_50,
+    lv_ctry,
+    lv_purchaseorder,
+    lv_base_doc,
+    lv_len,
+    lv_offset,
+    lv_user_id,
+    lv_bp2,
+    lv_url,
+    lv_bpfname,
+    lv_q1,
+    lv_shipto,
+    lv_q2,
+    lv_bpap,
+    lv_sldtocust,
+    lv_shiptocust,
+    lv_response_body,
+    lv_refdocument,
+    lv_partner_for_bp.
+
+  lv_partner_for_bp = <transp_order_in>-consignee.
+
+  "------------------------------------------------------
+  " Outbound delivery
+  "------------------------------------------------------
+  SELECT transpbasedocument
+    FROM i_transportationorderitem_2
+    WHERE transportationorderuuid = @<transp_order_in>-transportationorderuuid
+    INTO TABLE @DATA(lt_base_doc).
+
+  IF sy-subrc = 0.
+    LOOP AT lt_base_doc INTO lv_base_doc.
+      IF lv_base_doc IS NOT INITIAL.
+        lv_refdocument = |{ lv_base_doc ALPHA = IN }|.
+        lv_outd = lv_refdocument.
+        EXIT.
+      ENDIF.
+    ENDLOOP.
+
+    <transp_order_out>-yy1_docbase_tor = lv_outd.
+  ELSE.
+    <transp_order_out>-yy1_docbase_tor = '1111111'.
+  ENDIF.
+
+  "------------------------------------------------------
+  " STO : use Ship-To from Outbound Delivery if available
+  "------------------------------------------------------
+  IF lv_outd IS NOT INITIAL.
+    SELECT SINGLE shiptoparty
+      FROM i_outbounddelivery
+      WHERE outbounddelivery = @lv_outd
+      INTO @lv_shipto.
+
+    IF sy-subrc = 0 AND lv_shipto IS NOT INITIAL.
+      lv_partner_for_bp = lv_shipto.
+    ENDIF.
+  ENDIF.
+
+  "------------------------------------------------------
+  " Consignee / Address information
+  "------------------------------------------------------
+  SELECT SINGLE addressid
+    FROM i_businesspartnercustomerdex WITH PRIVILEGED ACCESS
+    WHERE businesspartner = @lv_partner_for_bp
+    INTO @lv_add.
+
+*  SELECT SINGLE organizationbpname1
+*    FROM i_businesspartner
+*    WHERE businesspartner = @lv_partner_for_bp
+*    INTO @lv_orgname1.
+*
+*  IF sy-subrc = 0.
+*    <transp_order_out>-yy1_bpname1tm_tor = lv_orgname1.
+*  ENDIF.
+*
+*  SELECT SINGLE organizationbpname2
+*    FROM i_businesspartner
+*    WHERE businesspartner = @lv_partner_for_bp
+*    INTO @lv_orgname2.
+*
+*  IF sy-subrc = 0.
+*    <transp_order_out>-yy1_bpname2tm_tor = lv_orgname2.
+*  ENDIF.
+
+  SELECT SINGLE FROM i_businesspartner
+    FIELDS organizationbpname1, organizationbpname2
+    WHERE businesspartner = @lv_partner_for_bp
+    INTO @DATA(ls_bp).
+  IF sy-subrc = 0.
+    <transp_order_out>-yy1_bpname1tm_tor = ls_bp-organizationbpname1.
+    <transp_order_out>-yy1_bpname2tm_tor = ls_bp-organizationbpname2.
+  ENDIF.
+
+  IF lv_add IS NOT INITIAL.
+
+    SELECT SINGLE region, postalcode, streetname, housenumber, cityname
+      FROM i_address_2 WITH PRIVILEGED ACCESS
+      WHERE addressid = @lv_add
+      INTO (@lv_region, @lv_postalcode, @lv_streetname, @lv_street, @lv_cityname).
+
+    IF sy-subrc = 0.
+      IF lv_region IS NOT INITIAL.
+        <transp_order_out>-yy1_regionnametm_tor = lv_region.
+      ENDIF.
+
+      IF lv_postalcode IS NOT INITIAL.
+        <transp_order_out>-yy1_postalcode_tor = lv_postalcode.
+      ENDIF.
+
+      IF lv_streetname IS NOT INITIAL.
+        <transp_order_out>-yy1_streethousetm_tor = lv_streetname.
+      ENDIF.
+
+      IF lv_street IS NOT INITIAL.
+        <transp_order_out>-yy1_streettm_tor = lv_street.
+      ENDIF.
+
+      IF lv_cityname IS NOT INITIAL.
+        <transp_order_out>-yy1_cityname_tor = lv_cityname.
+      ENDIF.
+    ENDIF.
+
+    SELECT SINGLE country
+      FROM i_address_2 WITH PRIVILEGED ACCESS
+      WHERE addressid = @lv_add
+      INTO @lv_count.
+
+    IF sy-subrc = 0 AND lv_count IS NOT INITIAL.
+      SELECT SINGLE countryname
+        FROM i_countrytext WITH PRIVILEGED ACCESS
+        WHERE country = @lv_count
+        INTO @lv_countryname.
+
+      IF sy-subrc = 0.
+        <transp_order_out>-yy1_countrytm_tor = lv_countryname.
+      ENDIF.
+    ENDIF.
+
+  ENDIF.
+
+    "======================================================
+  " BEGIN - Ajout par Imen le 07/10/2026
+  " Champs BOL dédiés au nom et à l'adresse consignataire
+  "======================================================
+
+  CLEAR:
+    <transp_order_out>-yy1_consigneenamebol_tor,
+    <transp_order_out>-yy1_consigneeaddrbol_tor.
+
+  " Lire le nom du partenaire déjà déterminé par le code
+  " Lecture séparée pour ne pas réutiliser un ls_bp ancien
+  IF lv_partner_for_bp IS NOT INITIAL.
+
+    SELECT SINGLE FROM i_businesspartner
+      FIELDS organizationbpname1, organizationbpname2
+      WHERE businesspartner = @lv_partner_for_bp
+      INTO @DATA(ls_consignee_bol_name).
+
+    IF sy-subrc = 0.
+
+      <transp_order_out>-yy1_consigneenamebol_tor =
+        |{ ls_consignee_bol_name-organizationbpname1 } { ls_consignee_bol_name-organizationbpname2 }|.
+
+      CONDENSE <transp_order_out>-yy1_consigneenamebol_tor.
+
+    ENDIF.
+
+  ENDIF.
+
+  " Réutiliser le numéro et la rue déjà lus dans I_Address_2
+  " lv_street = HouseNumber ; lv_streetname = StreetName
+  IF lv_add IS NOT INITIAL.
+
+    IF lv_street IS NOT INITIAL
+       AND lv_streetname IS NOT INITIAL.
+
+      <transp_order_out>-yy1_consigneeaddrbol_tor =
+        |{ lv_street }, { lv_streetname }|.
+
+    ELSEIF lv_streetname IS NOT INITIAL.
+
+      <transp_order_out>-yy1_consigneeaddrbol_tor =
+        lv_streetname.
+
+    ELSEIF lv_street IS NOT INITIAL.
+
+      <transp_order_out>-yy1_consigneeaddrbol_tor =
+        lv_street.
+
+    ENDIF.
+
+  ENDIF.
+
+  "======================================================
+  " END - Ajout par Imen le 07/10/2026
+  "======================================================
+
+  "------------------------------------------------------
+  " Consignee country / language
+  "------------------------------------------------------
+*  SELECT SINGLE country
+*    FROM i_businesspartnercustomerdex WITH PRIVILEGED ACCESS
+*    WHERE businesspartner = @<transp_order_in>-consignee
+*    INTO @lv_country.
+
+*  IF sy-subrc = 0.
+*    <transp_order_out>-yy1_country_shipper_tor = lv_country.
+*  ENDIF.
+
+  "------------------------------------------------------
+  " Shipper country
+  "------------------------------------------------------
+   "------------------------------------------------------
+  " Pays expéditeur depuis la localisation source
+  "------------------------------------------------------
+  DATA:
+    lv_ctry_src_address TYPE i_address_2-addressid,
+    lv_ctry_src_code    TYPE i_address_2-country.
+
+  CLEAR:
+    lv_ctry_src_address,
+    lv_ctry_src_code,
+    <transp_order_out>-yy1_country_shipper_tor.
+
+  LOOP AT transp_order_items_bi_in
+    ASSIGNING FIELD-SYMBOL(<ctry_source_item>)
+    WHERE transportationorderuuid =
+          <transp_order_in>-transportationorderuuid.
+
+    IF <ctry_source_item>-sourcestopuuid IS INITIAL.
+      CONTINUE.
+    ENDIF.
+
+    CLEAR:
+      lv_ctry_src_address,
+      lv_ctry_src_code.
+
+    " Adresse de la localisation de départ
+    SELECT SINGLE \_Location-AddressID
+      FROM i_transportationorderstop_2
+      WHERE transportationorderstopuuid =
+            @<ctry_source_item>-sourcestopuuid
+      INTO @lv_ctry_src_address.
+
+    IF sy-subrc <> 0 OR lv_ctry_src_address IS INITIAL.
+      CONTINUE.
+    ENDIF.
+
+    " Pays de cette adresse
+    SELECT SINGLE country
+      FROM i_address_2 WITH PRIVILEGED ACCESS
+      WHERE addressid = @lv_ctry_src_address
+      INTO @lv_ctry_src_code.
+
+    IF sy-subrc <> 0 OR lv_ctry_src_code IS INITIAL.
+      CONTINUE.
+    ENDIF.
+
+    <transp_order_out>-yy1_country_shipper_tor =
+      lv_ctry_src_code.
+
+    " Retenir la première source possédant un pays
+    EXIT.
+
+  ENDLOOP.
+   " BEGIN - Ajout par Imen le 07/10/2026
+  " Alimenter la province depuis l'adresse de la localisation source
+
+  DATA:
+    lv_source_address TYPE i_address_2-addressid,
+    lv_source_country TYPE i_address_2-country,
+    lv_source_region  TYPE i_address_2-region,
+    lv_region_name    TYPE string.
+
+  CLEAR:
+    lv_source_address,
+    lv_source_country,
+    lv_source_region,
+    lv_region_name,
+    <transp_order_out>-yy1_shipperregion_tor.
+
+  LOOP AT transp_order_items_bi_in
+    ASSIGNING FIELD-SYMBOL(<source_item>)
+    WHERE transportationorderuuid =
+          <transp_order_in>-transportationorderuuid.
+
+    IF <source_item>-sourcestopuuid IS INITIAL.
+      CONTINUE.
+    ENDIF.
+
+    CLEAR:
+      lv_source_address,
+      lv_source_country,
+      lv_source_region,
+      lv_region_name.
+
+    " Lire l'identifiant d'adresse via la localisation de l'arrêt source
+    SELECT SINGLE \_Location-AddressID
+      FROM i_transportationorderstop_2
+      WHERE transportationorderstopuuid =
+            @<source_item>-sourcestopuuid
+      INTO @lv_source_address.
+
+    IF sy-subrc <> 0 OR lv_source_address IS INITIAL.
+      CONTINUE.
+    ENDIF.
+
+    " Lire le pays et le code région de cette adresse
+    SELECT SINGLE country, region
+      FROM i_address_2 WITH PRIVILEGED ACCESS
+      WHERE addressid = @lv_source_address
+      INTO (@lv_source_country, @lv_source_region).
+
+    IF sy-subrc <> 0
+       OR lv_source_country IS INITIAL
+       OR lv_source_region IS INITIAL.
+      CONTINUE.
+    ENDIF.
+
+    " Lire le nom complet de la région en anglais
+    SELECT SINGLE regionname
+      FROM i_regiontext
+      WHERE country  = @lv_source_country
+        AND region   = @lv_source_region
+        AND language = 'E'
+      INTO @lv_region_name.
+
+    IF sy-subrc = 0 AND lv_region_name IS NOT INITIAL.
+      <transp_order_out>-yy1_shipperregion_tor = lv_region_name.
+    ELSE.
+      " Utiliser le code région si le nom complet est absent
+      <transp_order_out>-yy1_shipperregion_tor = lv_source_region.
+    ENDIF.
+
+    " Retenir la première source possédant une région
+    EXIT.
+
+  ENDLOOP.
+
+  " END - Ajout par Imen le 07/10/2026
+    "======================================================
+  " BEGIN - Ajout par Imen le 08/10/2026
+  " Adresse BOL depuis la localisation source
+  "======================================================
+
+  DATA:
+    lv_bol_source_address TYPE i_address_2-addressid,
+    lv_bol_source_house   TYPE i_address_2-housenumber,
+    lv_bol_source_street  TYPE i_address_2-streetname.
+
+  CLEAR:
+    lv_bol_source_address,
+    lv_bol_source_house,
+    lv_bol_source_street,
+    <transp_order_out>-yy1_shipperaddressbol_tor.
+
+  LOOP AT transp_order_items_bi_in
+    ASSIGNING FIELD-SYMBOL(<bol_source_item>)
+    WHERE transportationorderuuid =
+          <transp_order_in>-transportationorderuuid.
+
+    IF <bol_source_item>-sourcestopuuid IS INITIAL.
+      CONTINUE.
+    ENDIF.
+
+    CLEAR:
+      lv_bol_source_address,
+      lv_bol_source_house,
+      lv_bol_source_street.
+
+    " Récupérer l'adresse de la localisation source
+    SELECT SINGLE \_Location-AddressID
+      FROM i_transportationorderstop_2
+      WHERE transportationorderstopuuid =
+            @<bol_source_item>-sourcestopuuid
+      INTO @lv_bol_source_address.
+
+    IF sy-subrc <> 0 OR lv_bol_source_address IS INITIAL.
+      CONTINUE.
+    ENDIF.
+
+    " Lire le numéro de maison et la rue
+    SELECT SINGLE housenumber, streetname
+      FROM i_address_2 WITH PRIVILEGED ACCESS
+      WHERE addressid = @lv_bol_source_address
+      INTO (@lv_bol_source_house, @lv_bol_source_street).
+
+    IF sy-subrc <> 0.
+      CONTINUE.
+    ENDIF.
+
+    IF lv_bol_source_house IS NOT INITIAL
+       AND lv_bol_source_street IS NOT INITIAL.
+
+      <transp_order_out>-yy1_shipperaddressbol_tor =
+        |{ lv_bol_source_house }, { lv_bol_source_street }|.
+
+    ELSEIF lv_bol_source_street IS NOT INITIAL.
+
+      <transp_order_out>-yy1_shipperaddressbol_tor =
+        lv_bol_source_street.
+
+    ELSEIF lv_bol_source_house IS NOT INITIAL.
+
+      <transp_order_out>-yy1_shipperaddressbol_tor =
+        lv_bol_source_house.
+
+    ELSE.
+      CONTINUE.
+    ENDIF.
+
+    " Retenir la première source ayant une adresse
+    EXIT.
+
+  ENDLOOP.
+
+  " END - Ajout par Imen le 08/10/2026
+  "======================================================
+
+    "======================================================
+  " BEGIN - Ajout par Imen le 09/10/2026
+  " Code postal BOL depuis la localisation source
+  "======================================================
+
+  DATA:
+    lv_postal_source_address TYPE i_address_2-addressid,
+    lv_postal_source_code    TYPE i_address_2-postalcode.
+
+  CLEAR:
+    lv_postal_source_address,
+    lv_postal_source_code,
+    <transp_order_out>-yy1_shipperpostalcodeb_tor.
+
+  LOOP AT transp_order_items_bi_in
+    ASSIGNING FIELD-SYMBOL(<postal_source_item>)
+    WHERE transportationorderuuid =
+          <transp_order_in>-transportationorderuuid.
+
+    IF <postal_source_item>-sourcestopuuid IS INITIAL.
+      CONTINUE.
+    ENDIF.
+
+    CLEAR:
+      lv_postal_source_address,
+      lv_postal_source_code.
+
+    " Lire l'adresse de la localisation source
+    SELECT SINGLE \_Location-AddressID
+      FROM i_transportationorderstop_2
+      WHERE transportationorderstopuuid =
+            @<postal_source_item>-sourcestopuuid
+      INTO @lv_postal_source_address.
+
+    IF sy-subrc <> 0
+       OR lv_postal_source_address IS INITIAL.
+      CONTINUE.
+    ENDIF.
+
+    " Lire le code postal de cette adresse
+    SELECT SINGLE postalcode
+      FROM i_address_2 WITH PRIVILEGED ACCESS
+      WHERE addressid = @lv_postal_source_address
+      INTO @lv_postal_source_code.
+
+    IF sy-subrc <> 0
+       OR lv_postal_source_code IS INITIAL.
+      CONTINUE.
+    ENDIF.
+
+    <transp_order_out>-yy1_shipperpostalcodeb_tor =
+      lv_postal_source_code.
+
+    " Retenir la première source ayant un code postal
+    EXIT.
+
+  ENDLOOP.
+
+  " END - Ajout par Imen le 09/10/2026
+  "======================================================
+
+  SELECT SINGLE language
+    FROM i_businesspartnercustomerdex WITH PRIVILEGED ACCESS
+    WHERE businesspartner = @<transp_order_in>-consignee
+    INTO @lv_language.
+
+  IF sy-subrc = 0.
+    <transp_order_out>-yy1_bp_language_tor = lv_language.
+  ENDIF.
+
+  "------------------------------------------------------
+  " Carrier name
+  "------------------------------------------------------
+  SELECT SINGLE businesspartnername
+    FROM i_businesspartner
+    WHERE businesspartner = @<transp_order_in>-carrier
+    INTO @lv_carriername.
+
+  IF sy-subrc = 0.
+    <transp_order_out>-yy1_carrier_name_tor = lv_carriername.
+  ENDIF.
+  "======================================================
+  " BEGIN - Ajout par Imen le 12/10/2026
+  " Nom du transporteur exécutant pour le formulaire BOL
+  "======================================================
+
+  DATA:
+    lv_executing_carrier TYPE i_businesspartner-businesspartner,
+    lv_executing_name   TYPE i_businesspartner-businesspartnername.
+
+  CLEAR:
+    lv_executing_carrier,
+    lv_executing_name,
+    <transp_order_out>-yy1_executingcarrier_tor.
+
+  " Lire le transporteur exécutant de l'ordre courant
+  SELECT SINGLE transpordexecutingcarrier
+    FROM i_transportationorder_2
+    WHERE transportationorderuuid =
+          @<transp_order_in>-transportationorderuuid
+    INTO @lv_executing_carrier.
+
+  IF sy-subrc = 0 AND lv_executing_carrier IS NOT INITIAL.
+
+    " Lire le nom du partenaire
+    SELECT SINGLE businesspartnername
+      FROM i_businesspartner
+      WHERE businesspartner = @lv_executing_carrier
+      INTO @lv_executing_name.
+
+    IF sy-subrc = 0 AND lv_executing_name IS NOT INITIAL.
+
+      <transp_order_out>-yy1_executingcarrier_tor =
+        lv_executing_name.
+
+    ENDIF.
+
+  ENDIF.
+
+  " END - Ajout par Imen le 12/10/2026
+  "======================================================
+
+  "------------------------------------------------------
+  " SD document
+  "------------------------------------------------------
+  SELECT SINGLE referencesddocument
+    FROM i_outbounddeliveryitem
+    WHERE outbounddelivery = @lv_outd
+    INTO @lv_sdnumber.
+
+  IF sy-subrc = 0 AND lv_sdnumber IS NOT INITIAL.
+    <transp_order_out>-yy1_salesordernumberre_tor = lv_sdnumber.
+  ENDIF.
+
+  "======================================================
+  " BEGIN - Ajout par Imen le 14/10/2026
+  " Consignee BOL : adresse spécifique à la commande
+  " Conserver la logique BP lorsque l'adresse est identique
+  "======================================================
+
+  DATA:
+    lv_bol_cust_address TYPE i_salesorderpartner-addressid,
+    lv_bol_cust_master  TYPE i_address_2-addressid,
+    lv_bol_cust_name    TYPE string,
+    lv_bol_cust_street  TYPE string.
+
+  CLEAR:
+    lv_bol_cust_address,
+    lv_bol_cust_master,
+    lv_bol_cust_name,
+    lv_bol_cust_street.
+
+  IF lv_sdnumber IS NOT INITIAL
+     AND lv_partner_for_bp IS NOT INITIAL.
+
+    " Adresse du Ship-to dans la commande client.
+    " Filtrer aussi le client pour éviter de retenir un autre partenaire.
+    SELECT SINGLE addressid
+      FROM i_salesorderpartner
+      WHERE salesorder = @lv_sdnumber
+        AND partnerfunction = 'WE'
+        AND customer = @lv_partner_for_bp
+      INTO @lv_bol_cust_address.
+
+    IF sy-subrc = 0 AND lv_bol_cust_address IS NOT INITIAL.
+
+      " lv_add contient l'adresse BP lue par le traitement existant.
+      lv_bol_cust_master = lv_add.
+
+      " Appliquer uniquement si l'adresse documentaire est différente.
+      IF lv_bol_cust_address <> lv_bol_cust_master.
+
+        " Lire les informations de cette même adresse.
+        SELECT SINGLE
+               organizationname1,
+               organizationname2,
+               organizationname3,
+               organizationname4,
+               addresseefullname,
+               housenumber,
+               streetname,
+               cityname,
+               region,
+               country,
+               postalcode
+          FROM i_addressdefaultrepresentation
+               WITH PRIVILEGED ACCESS
+          WHERE addressid = @lv_bol_cust_address
+            AND addresspersonid IS INITIAL
+            AND addressrepresentationcode IS INITIAL
+          INTO @DATA(ls_bol_cust_address).
+
+        IF sy-subrc = 0.
+
+          " Nom de l'organisation sans le libellé Société.
+          lv_bol_cust_name =
+            |{ ls_bol_cust_address-organizationname1 } { ls_bol_cust_address-organizationname2 } { ls_bol_cust_address-organizationname3 } { ls_bol_cust_address-organizationname4 }|.
+
+          CONDENSE lv_bol_cust_name.
+
+          " Repli sur le nom complet si les noms d'organisation sont vides.
+          IF lv_bol_cust_name IS INITIAL.
+            lv_bol_cust_name =
+              ls_bol_cust_address-addresseefullname.
+            CONDENSE lv_bol_cust_name.
+          ENDIF.
+
+          " Construire le numéro et la rue.
+          IF ls_bol_cust_address-housenumber IS NOT INITIAL
+             AND ls_bol_cust_address-streetname IS NOT INITIAL.
+
+            lv_bol_cust_street =
+              |{ ls_bol_cust_address-housenumber }, { ls_bol_cust_address-streetname }|.
+
+          ELSEIF ls_bol_cust_address-streetname IS NOT INITIAL.
+
+            lv_bol_cust_street =
+              ls_bol_cust_address-streetname.
+
+          ELSE.
+
+            lv_bol_cust_street =
+              ls_bol_cust_address-housenumber.
+
+          ENDIF.
+
+          " Remplacer ensemble les données par celles de l'adresse
+          " documentaire, y compris les valeurs vides.
+          " Cela évite de mélanger cette adresse avec la fiche BP.
+          <transp_order_out>-yy1_consigneenamebol_tor =
+            lv_bol_cust_name.
+
+          <transp_order_out>-yy1_consigneeaddrbol_tor =
+            lv_bol_cust_street.
+
+          <transp_order_out>-yy1_cityname_tor =
+            ls_bol_cust_address-cityname.
+
+          <transp_order_out>-yy1_regionnametm_tor =
+            ls_bol_cust_address-region.
+
+          " Code pays demandé : FR, CA, US...
+          <transp_order_out>-yy1_countrytm_tor =
+            ls_bol_cust_address-country.
+
+          <transp_order_out>-yy1_postalcode_tor =
+            ls_bol_cust_address-postalcode.
+
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+  "======================================================
+  " END - Ajout par Imen le 14/10/2026
+  "======================================================
+  "------------------------------------------------------
+  " Customer PO
+  "------------------------------------------------------
+ "------------------------------------------------------
+" Customer PO - récupérer PO client liés aux livraisons du Freight Order
+" puis concaténer sans doublons
+"------------------------------------------------------
+
+DATA: lt_bol_deliveries   TYPE SORTED TABLE OF i_outbounddelivery-outbounddelivery WITH UNIQUE KEY table_line,
+      lt_bol_delivery_refs TYPE TABLE OF string WITH EMPTY KEY,
+      lt_bol_customer_refs TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line,
+      lv_bol_delivery     TYPE i_outbounddelivery-outbounddelivery.
+
+
+CLEAR lt_bol_customer_refs.
+
+" 1. Récupérer la liste des livraisons associées à la TO
+SELECT DISTINCT transpbasedocument
+  FROM i_transportationorderitem_2
+  WHERE transportationorderuuid = @<transp_order_in>-transportationorderuuid
+    AND transpbasedocument IS NOT INITIAL
+  INTO TABLE @lt_bol_deliveries.
+
+" 2. Parcourir les livraisons et récupérer les PO clients liés
+LOOP AT lt_bol_deliveries INTO lv_bol_delivery.
+
+  SELECT DISTINCT sales_doc~purchaseorderbycustomer
+    FROM i_ewm_outbdelivorditem AS delivery_item
+    INNER JOIN i_salesdocument AS sales_doc
+      ON sales_doc~salesdocument = delivery_item~salesorder
+    WHERE delivery_item~outbounddelivery = @lv_bol_delivery
+      AND sales_doc~purchaseorderbycustomer IS NOT INITIAL
+    INTO TABLE @lt_bol_delivery_refs.
+
+  LOOP AT lt_bol_delivery_refs INTO DATA(ls_po).
+    " Insère en évitant les doublons
+    INSERT ls_po INTO TABLE lt_bol_customer_refs.
+  ENDLOOP.
+
+ENDLOOP.
+DATA lv_custref_separated TYPE string.
+" 3. Construire la liste PO distincte
+CONCATENATE LINES OF lt_bol_customer_refs INTO lv_custref_separated SEPARATED BY ', '.
+
+" 4. Si la liste est vide, essayer de lire PO depuis Sales Order sur lv_sdnumber
+IF lv_custref_separated IS INITIAL AND lv_sdnumber IS NOT INITIAL.
+
+  SELECT SINGLE purchaseorderbycustomer
+    FROM i_salesorder
+    WHERE salesorder = @lv_sdnumber
+    AND purchaseorderbycustomer IS NOT INITIAL
+    INTO @DATA(lv_po_so).
+
+  IF sy-subrc = 0 AND lv_po_so IS NOT INITIAL.
+    lv_custref_separated = lv_po_so.
+  ENDIF.
+
+ENDIF.
+
+" 5. Si toujours vide, conserver la valeur déjà existante dans le champ sortie
+IF lv_custref_separated IS NOT INITIAL.
+  <transp_order_out>-yy1_po_number_tor = lv_custref_separated.
+ENDIF.
+  "------------------------------------------------------
+  " Billing document
+  "------------------------------------------------------
+  SELECT SINGLE billingdocument
+    FROM i_billingdocumentitem
+    WHERE referencesddocument = @lv_outd
+    INTO @lv_bill.
+
+  IF sy-subrc = 0.
+    <transp_order_out>-yy1_invoice_no_tor = lv_bill.
+  ENDIF.
+
+  "======================================================
+  " BEGIN - Ajout par Imen le 14/10/2026
+  " Liste des factures liées aux livraisons du Freight Order
+  " Nouveau champ dédié : YY1_InvoicesList
+  "======================================================
+
+  DATA:
+
+
+    lt_bol_invoices TYPE SORTED TABLE OF
+      i_billingdocumentitem-billingdocument
+      WITH UNIQUE KEY table_line,
+
+    lv_bol_invoice  TYPE i_billingdocumentitem-billingdocument,
+    lv_bol_base     TYPE i_transportationorderitem_2-transpbasedocument,
+    lv_bol_text     TYPE string,
+    lv_bol_list     TYPE string.
+
+  CLEAR:
+    lt_bol_deliveries,
+    lt_bol_invoices,
+    lv_bol_delivery,
+    lv_bol_invoice,
+    lv_bol_base,
+    lv_bol_text,
+    lv_bol_list,
+    <transp_order_out>-yy1_invoiceslist_tor.
+
+  " Lire tous les documents de base de l'ordre courant.
+  SELECT DISTINCT transpbasedocument
+    FROM i_transportationorderitem_2
+    WHERE transportationorderuuid =
+          @<transp_order_in>-transportationorderuuid
+      AND transpbasedocument IS NOT INITIAL
+    INTO TABLE @DATA(lt_bol_base_documents).
+
+  LOOP AT lt_bol_base_documents INTO lv_bol_base.
+
+    " Nettoyer le numéro du document de base.
+    lv_bol_text = lv_bol_base.
+    CONDENSE lv_bol_text NO-GAPS.
+    SHIFT lv_bol_text LEFT DELETING LEADING '0'.
+
+    IF lv_bol_text IS INITIAL OR strlen( lv_bol_text ) > 10.
+      CONTINUE.
+    ENDIF.
+
+    " Mettre le numéro au format livraison SAP sur 10 caractères.
+    lv_bol_delivery = lv_bol_text.
+    lv_bol_delivery = |{ lv_bol_delivery ALPHA = IN }|.
+
+    " Vérifier que le document est une livraison sortante.
+    SELECT SINGLE outbounddelivery
+      FROM i_outbounddelivery
+      WHERE outbounddelivery = @lv_bol_delivery
+      INTO @DATA(lv_bol_existing_delivery).
+
+    IF sy-subrc = 0.
+      " Conserver chaque livraison une seule fois.
+      INSERT lv_bol_existing_delivery
+        INTO TABLE lt_bol_deliveries.
+    ENDIF.
+
+  ENDLOOP.
+
+  " Lire toutes les factures associées à chaque livraison.
+  LOOP AT lt_bol_deliveries INTO lv_bol_delivery.
+
+    SELECT DISTINCT billingdocument
+      FROM i_billingdocumentitem
+      WHERE referencesddocument = @lv_bol_delivery
+      INTO TABLE @DATA(lt_bol_delivery_invoices).
+
+    LOOP AT lt_bol_delivery_invoices INTO lv_bol_invoice.
+
+      IF lv_bol_invoice IS NOT INITIAL.
+        " Conserver chaque facture une seule fois.
+        INSERT lv_bol_invoice INTO TABLE lt_bol_invoices.
+      ENDIF.
+
+    ENDLOOP.
+
+  ENDLOOP.
+
+  " Construire la liste triée, séparée par /.
+  LOOP AT lt_bol_invoices INTO lv_bol_invoice.
+
+    lv_bol_text = |{ lv_bol_invoice ALPHA = OUT }|.
+    CONDENSE lv_bol_text NO-GAPS.
+
+    IF lv_bol_list IS INITIAL.
+      lv_bol_list = lv_bol_text.
+    ELSE.
+      lv_bol_list = lv_bol_list && '/' && lv_bol_text.
+    ENDIF.
+
+  ENDLOOP.
+
+  " Alimenter uniquement le nouveau champ dédié au BOL.
+  <transp_order_out>-yy1_invoiceslist_tor = lv_bol_list.
+
+  "======================================================
+  " END - Ajout par Imen le 14/10/2026
+  "======================================================
+  "------------------------------------------------------
+  " Broker description long text
+  "------------------------------------------------------
+  IF lv_sdnumber IS NOT INITIAL.
+
+    SELECT SINGLE yy1_us_broker_desc_sdh
+      FROM i_salesdocument
+      WHERE salesdocument = @lv_sdnumber
+      INTO @lv_code.
+
+    IF sy-subrc = 0 AND lv_code IS NOT INITIAL.
+
+      CONDENSE lv_code NO-GAPS.
+      lv_ctry = 'U'.
+
+      CLEAR: lv_desc_code, lv_desc_50.
+
+      SELECT SINGLE desc_code, desc_50
+        FROM yy1_dobrok_m
+        WHERE broker_no  = @lv_code
+          AND impor_ctry = @lv_ctry
+        INTO (@lv_desc_code, @lv_desc_50).
+
+      IF sy-subrc = 0 AND lv_desc_50 IS NOT INITIAL.
+        <transp_order_out>-yy1_notecomptafraisnon_tor = lv_desc_50.
+      ENDIF.
+
+    ENDIF.
+
+  ENDIF.
+
+  "------------------------------------------------------
+  " Plant
+  "------------------------------------------------------
+  CLEAR: lv_store, lv_purchaseorder.
+
+  IF lv_outd IS NOT INITIAL.
+
+    " 1) Depuis Outbound Delivery Item
+    SELECT SINGLE plant
+      FROM i_outbounddeliveryitem
+      WHERE outbounddelivery = @lv_outd
+        AND plant IS NOT INITIAL
+      INTO @lv_store.
+
+    IF sy-subrc = 0 AND lv_store IS NOT INITIAL.
+      <transp_order_out>-yy1_planttm_tor = lv_store.
+
+    ELSEIF lv_sdnumber IS NOT INITIAL.
+
+      " 2) Depuis Sales Order Item
+      CLEAR lv_store.
+      SELECT SINGLE plant
+        FROM i_salesorderitem
+        WHERE salesorder = @lv_sdnumber
+          AND plant IS NOT INITIAL
+        INTO @lv_store.
+
+      IF sy-subrc = 0 AND lv_store IS NOT INITIAL.
+        <transp_order_out>-yy1_planttm_tor = lv_store.
+
+      ELSE.
+
+        " 3) Depuis Purchase Order Item
+        CLEAR: lv_store, lv_purchaseorder.
+        lv_purchaseorder = lv_sdnumber.
+
+        SELECT SINGLE plant
+          FROM i_purchaseorderitemapi01
+          WHERE purchaseorder = @lv_purchaseorder
+            AND plant IS NOT INITIAL
+          INTO @lv_store.
+
+        IF sy-subrc = 0 AND lv_store IS NOT INITIAL.
+          <transp_order_out>-yy1_planttm_tor = lv_store.
+        ENDIF.
+
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+  "------------------------------------------------------
+  " Consignee number
+  "------------------------------------------------------
+  <transp_order_out>-yy1_bp_no_tor = lv_partner_for_bp.
+
+  "------------------------------------------------------
+  " API SO NOTE
+  "------------------------------------------------------
+  DATA lv_order_type TYPE i_salesorder-SalesOrderType.
+DATA lv_sdnumber_local TYPE i_outbounddeliveryitem-referencesddocument.
+DATA lv_note_bol TYPE string.
+
+
+" Récupérer le numéro de commande lié à la livraison
+SELECT SINGLE referencesddocument
+FROM i_outbounddeliveryitem
+WHERE outbounddelivery = @lv_outd
+INTO @lv_sdnumber_local.
+
+IF sy-subrc = 0 AND lv_sdnumber_local IS NOT INITIAL.
+
+" Récupérer le type de commande
+SELECT SINGLE salesordertype
+FROM i_salesorder
+WHERE salesorder = @lv_sdnumber_local
+INTO @lv_order_type.
+
+TRY.
+IF lv_order_type = 'CBFD'.
+
+    IF cl_ble_http_client=>is_service_available(
+          communication_scenario = 'YY1_INT_HTTP'
+          outbound_service       = 'YY1_SO_WITHOUTCHARGE_REST'
+       ) = abap_true.
+
+      DATA(lo_client) = cl_ble_http_client=>create(
+          communication_scenario = 'YY1_INT_HTTP'
+          outbound_service       = 'YY1_SO_WITHOUTCHARGE_REST'
+      ).
+
+      DATA(lo_request) = cl_ble_http_request=>create( ).
+      lo_request->set_method( 'GET' )->set_resource_extension(
+        |API_SALES_ORDER_WITHOUT_CHARGE_SRV/A_SalesOrderWithoutCharge?$filter=SalesOrder eq '{ lv_sdnumber_local }' and LongTextID eq 'ZTM1'|
+      ).
+
+      DATA(lo_response) = lo_client->send( lo_request ).
+      lv_response_body = lo_response->get_body( ).
+
+      SPLIT lv_response_body AT '<d:LongText>' INTO DATA(lv_tmp1) DATA(lv_tmp2).
+      SPLIT lv_tmp2 AT '</d:LongText>' INTO lv_note_bol DATA(lv_tmp3).
+
+      IF lv_note_bol IS NOT INITIAL.
+        CONDENSE lv_note_bol.
+        <transp_order_out>-yy1_notebol_tor = lv_note_bol.
+      ENDIF.
+
+    ENDIF.
+
+  ELSE.
+
+    IF cl_ble_http_client=>is_service_available(
+          communication_scenario = 'YY1_INT_HTTP'
+          outbound_service       = 'YY1_SALESORDERNOTE_REST'
+       ) = abap_true.
+
+     lo_client = cl_ble_http_client=>create(
+          communication_scenario = 'YY1_INT_HTTP'
+          outbound_service       = 'YY1_SALESORDERNOTE_REST'
+      ).
+
+      lo_request = cl_ble_http_request=>create( ).
+      lo_request->set_method( 'GET' )->set_resource_extension(
+        |/A_SalesOrderText?$filter=SalesOrder eq '{ lv_sdnumber_local }' and LongTextID eq 'ZTM1'|
+      ).
+
+      lo_response = lo_client->send( lo_request ).
+      lv_response_body = lo_response->get_body( ).
+
+      SPLIT lv_response_body AT '<d:LongText>' INTO lv_tmp1 lv_tmp2.
+      SPLIT lv_tmp2 AT '</d:LongText>' INTO lv_note_bol lv_tmp3.
+
+      IF lv_note_bol IS NOT INITIAL.
+        CONDENSE lv_note_bol.
+        <transp_order_out>-yy1_notebol_tor = lv_note_bol.
+      ENDIF.
+
+    ENDIF.
+
+  ENDIF.
+CATCH cx_ble_http_exception INTO DATA(lx_exception).
+  " Gérer l'exception si nécessaire
+ENDTRY.
+
+ENDIF.
+
+  TRY.
+      IF cl_ble_http_client=>is_service_available(
+            communication_scenario = 'YY1_INT_HTTP'
+            outbound_service       = 'YY1_SALESORDERNOTE_REST'
+         ) = abap_true.
+
+        DATA(lo_client2) = cl_ble_http_client=>create(
+            communication_scenario = 'YY1_INT_HTTP'
+            outbound_service       = 'YY1_SALESORDERNOTE_REST'
+        ).
+
+        CLEAR lv_url.
+        lv_url = |/A_SalesOrderText?$filter=SalesOrder eq '{ lv_sdnumber }' and LongTextID eq 'Z030'|.
+
+        DATA(lo_request2) = cl_ble_http_request=>create( ).
+        lo_request2->set_method( 'GET' )->set_resource_extension( lv_url ).
+
+        DATA(lo_response2) = lo_client2->send( lo_request2 ).
+        lv_response_body = lo_response2->get_body( ).
+
+        SPLIT lv_response_body AT '<d:LongText>' INTO lv_q1 lv_q2.
+        SPLIT lv_q2 AT '</d:LongText>' INTO lv_bpfname lv_q1.
+
+        IF sy-subrc = 0 AND lv_bpfname IS NOT INITIAL.
+          CONDENSE lv_bpfname.
+          <transp_order_out>-yy1_shipinst_tor = lv_bpfname.
+        ENDIF.
+
+      ENDIF.
+    CATCH cx_ble_http_exception INTO DATA(lx_exception2).
+
+  ENDTRY.
+  "======================================================
+  " BEGIN - Ajout par Imen le 16/10/2026
+  " Destinataire STO - Packing List / BOL
+  "
+  " Priorité :
+  " 1. Adresse personnalisée du magasin
+  " 2. Adresse de la localisation de destination
+  "
+  " Règle locale : PO commençant par 45.
+  " Périmètre : un PO et une destination unique par FO.
+  "======================================================
+
+  DATA:
+    lv_sto_po        TYPE i_purchaseorderitemapi01-purchaseorder,
+    lv_sto_store     TYPE i_purchaseorderitemapi01-storagelocation,
+    lv_sto_addr_id   TYPE i_address_2-addressid,
+    lv_sto_name      TYPE string,
+    lv_sto_street    TYPE string,
+    lv_sto_city      TYPE string,
+    lv_sto_region    TYPE string,
+    lv_sto_postal    TYPE string,
+    lv_sto_country   TYPE string,
+    lv_sto_found     TYPE abap_bool.
+
+  CLEAR:
+    lv_sto_po,
+    lv_sto_store,
+    lv_sto_addr_id,
+    lv_sto_name,
+    lv_sto_street,
+    lv_sto_city,
+    lv_sto_region,
+    lv_sto_postal,
+    lv_sto_country,
+    lv_sto_found.
+
+  IF lv_outd IS NOT INITIAL.
+
+    " Lire les PO liés à la livraison courante.
+    SELECT DISTINCT purchaseorder
+      FROM i_deliverydocumentitem WITH PRIVILEGED ACCESS
+      WHERE deliverydocument = @lv_outd
+        AND purchaseorder IS NOT INITIAL
+      INTO TABLE @DATA(lt_sto_po).
+
+    " Traiter uniquement une livraison liée à un seul PO.
+    IF lines( lt_sto_po ) = 1.
+
+      READ TABLE lt_sto_po INDEX 1
+        INTO lv_sto_po.
+
+      IF sy-subrc = 0
+         AND lv_sto_po CP '45*'.
+
+        " Rechercher les magasins du PO.
+        SELECT DISTINCT storagelocation
+          FROM i_purchaseorderitemapi01
+               WITH PRIVILEGED ACCESS
+          WHERE purchaseorder = @lv_sto_po
+            AND storagelocation IS NOT INITIAL
+          INTO TABLE @DATA(lt_sto_store).
+
+        " Utiliser le magasin uniquement s'il est unique.
+        IF lines( lt_sto_store ) = 1.
+
+                   READ TABLE lt_sto_store INDEX 1
+            INTO lv_sto_store.
+
+          IF sy-subrc = 0
+             AND ( lv_sto_store = 'DATL'
+                OR lv_sto_store = 'RABH' ).
+
+            " Lire l'adresse personnalisée du magasin.
+            SELECT SINGLE
+                   name1,
+                   street_house_nb,
+                   city,
+                   region,
+                   postal_code,
+                   country
+              FROM yy1_addressemagasin
+                   WITH PRIVILEGED ACCESS
+              WHERE id_magasin = @lv_sto_store
+              INTO @DATA(ls_sto_mag).
+
+            IF sy-subrc = 0.
+
+              lv_sto_name =
+                ls_sto_mag-name1.
+
+              lv_sto_street =
+                ls_sto_mag-street_house_nb.
+
+              lv_sto_city =
+                ls_sto_mag-city.
+
+              lv_sto_region =
+                ls_sto_mag-region.
+
+              lv_sto_postal =
+                ls_sto_mag-postal_code.
+
+              lv_sto_country =
+                ls_sto_mag-country.
+
+              lv_sto_found = abap_true.
+
+            ENDIF.
+          ENDIF.
+        ENDIF.
+
+                " Repli : Delivery Address du poste STO.
+        IF lv_sto_found = abap_false.
+
+          " Bloc exécuté une fois.
+          " EXIT quitte uniquement ce bloc de repli.
+          DO 1 TIMES.
+
+            " Diagnostic : lire les adresses directement dans le STO.
+           SELECT DISTINCT manualdeliveryaddressid,
+                referencedeliveryaddressid
+  FROM i_purchaseorderitemapi01 WITH PRIVILEGED ACCESS
+  WHERE purchaseorder = @lv_sto_po
+  INTO TABLE @DATA(lt_sto_delivery_addr).
+
+            IF sy-subrc <> 0.
+              EXIT.
+            ENDIF.
+
+            DATA lt_sto_address_ids
+              TYPE SORTED TABLE OF i_address_2-addressid
+              WITH UNIQUE KEY table_line.
+
+            CLEAR lt_sto_address_ids.
+
+            LOOP AT lt_sto_delivery_addr
+              INTO DATA(ls_sto_delivery_addr).
+
+              CLEAR lv_sto_addr_id.
+
+              " Priorité à l'adresse manuelle du poste.
+                           " Identifiant de l'adresse manuelle du poste STO.
+                         " Adresse manuelle en priorité.
+              " Sinon, adresse documentaire du poste STO.
+
+" Priorité à l'adresse manuelle du poste STO.
+lv_sto_addr_id =
+  ls_sto_delivery_addr-manualdeliveryaddressid.
+
+" Sinon, utiliser la référence d'adresse du poste STO.
+IF lv_sto_addr_id IS INITIAL.
+  lv_sto_addr_id =
+    ls_sto_delivery_addr-referencedeliveryaddressid.
+ENDIF.
+
+              IF lv_sto_addr_id IS NOT INITIAL.
+                INSERT lv_sto_addr_id
+                  INTO TABLE lt_sto_address_ids.
+              ENDIF.
+
+            ENDLOOP.
+
+            " Ne pas choisir arbitrairement entre
+            " plusieurs adresses de livraison.
+            IF lines( lt_sto_address_ids ) <> 1.
+              EXIT.
+            ENDIF.
+
+            READ TABLE lt_sto_address_ids INDEX 1
+              INTO lv_sto_addr_id.
+
+            IF sy-subrc <> 0.
+              EXIT.
+            ENDIF.
+
+            SELECT SINGLE
+                   organizationname1,
+                   organizationname2,
+                   organizationname3,
+                   organizationname4,
+                   addresseefullname,
+                   housenumber,
+                   streetname,
+                   cityname,
+                   region,
+                   postalcode,
+                   country
+              FROM i_addressdefaultrepresentation
+                   WITH PRIVILEGED ACCESS
+              WHERE addressid = @lv_sto_addr_id
+                AND addresspersonid IS INITIAL
+                AND addressrepresentationcode IS INITIAL
+              INTO @DATA(ls_sto_dest).
+
+            IF sy-subrc <> 0.
+              EXIT.
+            ENDIF.
+
+            " Nom du destinataire.
+            lv_sto_name =
+              |{ ls_sto_dest-organizationname1 } { ls_sto_dest-organizationname2 } { ls_sto_dest-organizationname3 } { ls_sto_dest-organizationname4 }|.
+
+            CONDENSE lv_sto_name.
+
+            IF lv_sto_name IS INITIAL.
+              lv_sto_name =
+                ls_sto_dest-addresseefullname.
+            ENDIF.
+
+            " Numéro et rue.
+            IF ls_sto_dest-housenumber IS NOT INITIAL
+               AND ls_sto_dest-streetname IS NOT INITIAL.
+
+              lv_sto_street =
+                |{ ls_sto_dest-housenumber }, { ls_sto_dest-streetname }|.
+
+            ELSEIF ls_sto_dest-streetname IS NOT INITIAL.
+
+              lv_sto_street =
+                ls_sto_dest-streetname.
+
+            ELSE.
+
+              lv_sto_street =
+                ls_sto_dest-housenumber.
+
+            ENDIF.
+
+            lv_sto_city =
+              ls_sto_dest-cityname.
+
+            lv_sto_region =
+              ls_sto_dest-region.
+
+            lv_sto_postal =
+              ls_sto_dest-postalcode.
+
+            lv_sto_country =
+              ls_sto_dest-country.
+
+            lv_sto_found = abap_true.
+
+          ENDDO.
+
+        ENDIF.
+
+        " Remplacer ensemble toutes les données du destinataire,
+        " y compris les valeurs vides pour éviter un mélange
+        " avec l'ancienne adresse BP.
+        IF lv_sto_found = abap_true.
+
+          <transp_order_out>-yy1_consigneenamebol_tor =
+            lv_sto_name.
+
+          <transp_order_out>-yy1_consigneeaddrbol_tor =
+            lv_sto_street.
+
+          <transp_order_out>-yy1_cityname_tor =
+            lv_sto_city.
+
+          <transp_order_out>-yy1_regionnametm_tor =
+            lv_sto_region.
+
+          <transp_order_out>-yy1_postalcode_tor =
+            lv_sto_postal.
+
+          <transp_order_out>-yy1_countrytm_tor =
+            lv_sto_country.
+
+        ENDIF.
+
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+  "======================================================
+  " END - Ajout par Imen le 16/10/2026
+  "======================================================
+ENDLOOP.
